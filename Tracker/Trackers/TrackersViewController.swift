@@ -12,17 +12,117 @@ final class TrackersViewController: UIViewController, TrackersViewControllerDele
     var visibleCategories: [TrackerCategory] = []
     var completedTrackers: [TrackerRecord] = []
     var currentDate: Date = Date()
-    var completedId: Set<String> = []
+    var completedId: Set<UUID> = []
     private var navBar: UINavigationBar?
-    private var titleLabel: UILabel?
-    private var dateLabel: UILabel?
-    private var datePicker: UIDatePicker?
-    private var stackView: UIStackView?
-    private var searchTextField: UISearchTextField?
-    private var cancelButton: UIButton?
-    private var messageImageView: UIImageView?
-    private var messageLabel: UILabel?
-    private var trackersCollectionView: UICollectionView?
+    private let titleLabel: UILabel = {
+        let titleLabel = UILabel()
+        titleLabel.text = "Трекеры"
+        titleLabel.textColor = .ypBlack
+        titleLabel.textAlignment = .left
+        titleLabel.font = .ypBold_34
+        titleLabel.translatesAutoresizingMaskIntoConstraints = false
+        return titleLabel
+    }()
+    private let dateLabel: UILabel = {
+        let dateLabel = UILabel()
+        dateLabel.backgroundColor = .ypBackgroundTrackersField
+        dateLabel.textColor = .ypBlack
+        dateLabel.textAlignment = .center
+        dateLabel.font = .ypRegular_17
+        dateLabel.layer.cornerRadius = 8
+        dateLabel.clipsToBounds = true
+        dateLabel.translatesAutoresizingMaskIntoConstraints = false
+        return dateLabel
+    }()
+    private let datePicker: UIDatePicker = {
+        let datePicker = UIDatePicker()
+        datePicker.preferredDatePickerStyle = .compact
+        datePicker.datePickerMode = .date
+        datePicker.locale = Locale(identifier: "ru_RU")
+        datePicker.calendar.firstWeekday = 2
+        datePicker.layer.cornerRadius = 8
+        datePicker.clipsToBounds = true
+        datePicker.tintColor = .ypBlue
+        datePicker.date = Date()
+        datePicker.addTarget(
+            self,
+            action: #selector(didChangedDatePicker),
+            for: .valueChanged
+        )
+        datePicker.translatesAutoresizingMaskIntoConstraints = false
+        return datePicker
+    }()
+    private let stackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .horizontal
+        stackView.distribution = .fill
+        stackView.spacing = 14
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        return stackView
+    }()
+    private lazy var searchTextField: UISearchTextField = {
+        let searchTextField = UISearchTextField()
+        searchTextField.attributedPlaceholder = NSAttributedString(
+            string: "Поиск",
+            attributes: [NSAttributedString.Key.foregroundColor: UIColor.ypGray]
+        )
+        searchTextField.backgroundColor = .ypBackgroundTrackersField.withAlphaComponent(0)
+        searchTextField.font = .ypRegular_17
+        searchTextField.textColor = .ypBlack
+        searchTextField.clearButtonMode = .never
+        searchTextField.delegate = self
+        searchTextField.addTarget(
+            self,
+            action: #selector(didChangedSearchTextField),
+            for: .editingChanged)
+        searchTextField.translatesAutoresizingMaskIntoConstraints = false
+        return searchTextField
+    }()
+    private let cancelButton: UIButton = {
+        let cancelButton = UIButton()
+        cancelButton.backgroundColor = .clear
+        cancelButton.titleLabel?.font = .ypRegular_17
+        cancelButton.setTitleColor(.ypBlue, for: .normal)
+        cancelButton.setTitle("Отменить", for: .normal)
+        cancelButton.layer.cornerRadius = 16
+        cancelButton.layer.masksToBounds = true
+        cancelButton.addTarget(
+            self,
+            action: #selector(didCancelButton),
+            for: .touchUpInside
+        )
+        cancelButton.isHidden = true
+        cancelButton.translatesAutoresizingMaskIntoConstraints = false
+        return cancelButton
+    }()
+    private let messageImageView: UIImageView = {
+        let messageImageView = UIImageView()
+        messageImageView.contentMode = .scaleAspectFit
+        messageImageView.isHidden = true
+        messageImageView.translatesAutoresizingMaskIntoConstraints = false
+        return messageImageView
+    }()
+    private let messageLabel: UILabel = {
+        let messageLabel = UILabel()
+        messageLabel.text = "Что будем отслеживать?"
+        messageLabel.textColor = .ypBlack
+        messageLabel.textAlignment = .center
+        messageLabel.font = .ypMedium_12
+        messageLabel.isHidden = true
+        messageLabel.translatesAutoresizingMaskIntoConstraints = false
+        return messageLabel
+    }()
+    private lazy var trackersCollectionView: UICollectionView = {
+        let trackersCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
+        trackersCollectionView.dataSource = self
+        trackersCollectionView.delegate = self
+        trackersCollectionView.register(SupplementaryView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "header")
+        trackersCollectionView.register(TrackersCollectionViewCell.self, forCellWithReuseIdentifier: "trackersCell")
+        trackersCollectionView.backgroundColor = .clear
+        trackersCollectionView.allowsMultipleSelection = false
+        trackersCollectionView.translatesAutoresizingMaskIntoConstraints = false
+        return trackersCollectionView
+    }()
     private let params = GeometricParams(
         cellCount: 2,
         leftInset: 16,
@@ -35,8 +135,8 @@ final class TrackersViewController: UIViewController, TrackersViewControllerDele
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.view.backgroundColor = .ypWhite
         makeNavBar()
-        configureViews()
         addSubviews()
         makeConstraints()
         updateDateLabel(date: Date())
@@ -57,7 +157,7 @@ final class TrackersViewController: UIViewController, TrackersViewControllerDele
     
     func checkDateAndReloadTrackersCollectionView() {
         setVisibleCategoriesForDate()
-        trackersCollectionView?.reloadData()
+        trackersCollectionView.reloadData()
     }
     
     private func makeNavBar() {
@@ -74,149 +174,45 @@ final class TrackersViewController: UIViewController, TrackersViewControllerDele
         self.navigationItem.leftBarButtonItem = leftNavBarItem
         self.navBar = navBar
     }
-        
-    private func configureViews() {
-        self.view.backgroundColor = .ypWhite
-        
-        let titleLabel = UILabel()
-        titleLabel.text = "Трекеры"
-        titleLabel.textColor = .ypBlack
-        titleLabel.textAlignment = .left
-        titleLabel.font = .ypBold_34
-        titleLabel.translatesAutoresizingMaskIntoConstraints = false
-        self.titleLabel = titleLabel
-        
-        let datePicker = UIDatePicker()
-        datePicker.preferredDatePickerStyle = .compact
-        datePicker.datePickerMode = .date
-        datePicker.locale = Locale(identifier: "ru_RU")
-        datePicker.calendar.firstWeekday = 2
-        datePicker.layer.cornerRadius = 8
-        datePicker.clipsToBounds = true
-        datePicker.tintColor = .ypBlue
-        datePicker.date = Date()
-        datePicker.addTarget(
-            self,
-            action: #selector(didChangedDatePicker),
-            for: .valueChanged
-        )
-        datePicker.translatesAutoresizingMaskIntoConstraints = false
-        self.datePicker = datePicker
-        
-        let dateLabel = UILabel()
-        dateLabel.backgroundColor = .ypBackgroundTrackersField
-        dateLabel.textColor = .ypBlack
-        dateLabel.textAlignment = .center
-        dateLabel.font = .ypRegular_17
-        dateLabel.layer.cornerRadius = 8
-        dateLabel.clipsToBounds = true
-        dateLabel.translatesAutoresizingMaskIntoConstraints = false
-        self.dateLabel = dateLabel
-        
-        let stackView = UIStackView()
-        stackView.axis = .horizontal
-        stackView.distribution = .fill
-        stackView.spacing = 14
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        self.stackView = stackView
-        
-        let searchTextField = UISearchTextField()
-        searchTextField.attributedPlaceholder = NSAttributedString(
-            string: "Поиск",
-            attributes: [NSAttributedString.Key.foregroundColor: UIColor.ypGray]
-        )
-        searchTextField.backgroundColor = .ypBackgroundTrackersField.withAlphaComponent(0)
-        searchTextField.font = .ypRegular_17
-        searchTextField.textColor = .ypBlack
-        searchTextField.clearButtonMode = .never
-        searchTextField.delegate = self
-        searchTextField.addTarget(
-            self,
-            action: #selector(didChangedSearchTextField),
-            for: .editingChanged)
-        searchTextField.translatesAutoresizingMaskIntoConstraints = false
-        self.searchTextField = searchTextField
-        
-        let cancelButton = UIButton()
-        cancelButton.backgroundColor = .clear
-        cancelButton.titleLabel?.font = .ypRegular_17
-        cancelButton.setTitleColor(.ypBlue, for: .normal)
-        cancelButton.setTitle("Отменить", for: .normal)
-        cancelButton.layer.cornerRadius = 16
-        cancelButton.layer.masksToBounds = true
-        cancelButton.addTarget(
-            self,
-            action: #selector(didCancelButton),
-            for: .touchUpInside
-        )
-        cancelButton.isHidden = true
-        cancelButton.translatesAutoresizingMaskIntoConstraints = false
-        self.cancelButton = cancelButton
-        
-        let messageImageView = UIImageView()
-        messageImageView.contentMode = .scaleAspectFit
-        messageImageView.isHidden = true
-        messageImageView.translatesAutoresizingMaskIntoConstraints = false
-        self.messageImageView = messageImageView
-        
-        let messageLabel = UILabel()
-        messageLabel.text = "Что будем отслеживать?"
-        messageLabel.textColor = .ypBlack
-        messageLabel.textAlignment = .center
-        messageLabel.font = .ypMedium_12
-        messageLabel.isHidden = true
-        messageLabel.translatesAutoresizingMaskIntoConstraints = false
-        self.messageLabel = messageLabel
-        
-        let trackersCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
-        trackersCollectionView.dataSource = self
-        trackersCollectionView.delegate = self
-        trackersCollectionView.register(SupplementaryView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "header")
-        trackersCollectionView.register(TrackersCollectionViewCell.self, forCellWithReuseIdentifier: "trackersCell")
-        trackersCollectionView.backgroundColor = .clear
-        trackersCollectionView.allowsMultipleSelection = false
-        trackersCollectionView.translatesAutoresizingMaskIntoConstraints = false
-        self.trackersCollectionView = trackersCollectionView
-    }
     
     private func addSubviews() {
-        view.addSubview(titleLabel ?? UILabel())
-        view.addSubview(datePicker ?? UIDatePicker())
-        view.addSubview(dateLabel ?? UILabel())
-        stackView?.addArrangedSubview(searchTextField ?? UISearchTextField())
-        stackView?.addArrangedSubview(cancelButton ?? UIButton())
-        view.addSubview(stackView ?? UIStackView())
-        view.addSubview(messageImageView ?? UIImageView())
-        view.addSubview(messageLabel ?? UILabel())
-        view.addSubview(trackersCollectionView ?? UICollectionView())
+        view.addSubview(titleLabel)
+        view.addSubview(datePicker)
+        view.addSubview(dateLabel)
+        stackView.addArrangedSubview(searchTextField)
+        stackView.addArrangedSubview(cancelButton)
+        view.addSubview(stackView)
+        view.addSubview(messageImageView)
+        view.addSubview(messageLabel)
+        view.addSubview(trackersCollectionView)
     }
     
     private func makeConstraints() {
         NSLayoutConstraint.activate([
-            titleLabel!.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            titleLabel!.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
-            datePicker!.heightAnchor.constraint(equalToConstant: 34),
-            datePicker!.widthAnchor.constraint(equalToConstant: 77),
-            datePicker!.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            datePicker!.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
-            dateLabel!.heightAnchor.constraint(equalToConstant: 34),
-            dateLabel!.widthAnchor.constraint(equalToConstant: 77),
-            dateLabel!.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            dateLabel!.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
-            stackView!.heightAnchor.constraint(equalToConstant: 36),
-            stackView!.topAnchor.constraint(equalTo: titleLabel!.bottomAnchor, constant: 7),
-            stackView!.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
-            stackView!.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
-            messageImageView!.widthAnchor.constraint(equalToConstant: 80),
-            messageImageView!.heightAnchor.constraint(equalToConstant: 80),
-            messageImageView!.topAnchor.constraint(equalTo: searchTextField!.bottomAnchor, constant: 230),
-            messageImageView!.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            messageLabel!.topAnchor.constraint(equalTo: messageImageView!.bottomAnchor, constant: 8),
-            messageLabel!.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            trackersCollectionView!.topAnchor.constraint(equalTo: searchTextField!.bottomAnchor, constant: 10),
-            trackersCollectionView!.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
-            trackersCollectionView!.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
-            trackersCollectionView!.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+            titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            titleLabel.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
+            datePicker.heightAnchor.constraint(equalToConstant: 34),
+            datePicker.widthAnchor.constraint(equalToConstant: 77),
+            datePicker.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            datePicker.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
+            dateLabel.heightAnchor.constraint(equalToConstant: 34),
+            dateLabel.widthAnchor.constraint(equalToConstant: 77),
+            dateLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            dateLabel.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
+            stackView.heightAnchor.constraint(equalToConstant: 36),
+            stackView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 7),
+            stackView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
+            stackView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
+            messageImageView.widthAnchor.constraint(equalToConstant: 80),
+            messageImageView.heightAnchor.constraint(equalToConstant: 80),
+            messageImageView.topAnchor.constraint(equalTo: searchTextField.bottomAnchor, constant: 230),
+            messageImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            messageLabel.topAnchor.constraint(equalTo: messageImageView.bottomAnchor, constant: 8),
+            messageLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            trackersCollectionView.topAnchor.constraint(equalTo: searchTextField.bottomAnchor, constant: 10),
+            trackersCollectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            trackersCollectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+            trackersCollectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
     }
     
@@ -229,30 +225,34 @@ final class TrackersViewController: UIViewController, TrackersViewControllerDele
     
     private func updateDateLabel(date: Date) {
         let dateString = formattedDate(date: date)
-        dateLabel?.text = dateString
+        dateLabel.text = dateString
     }
     
     private func messageNotHidden() {
-        messageImageView?.isHidden = false
-        messageLabel?.isHidden = false
+        messageImageView.isHidden = false
+        messageLabel.isHidden = false
     }
     
     private func messageHidden() {
-        messageImageView?.isHidden = true
-        messageLabel?.isHidden = true
+        messageImageView.isHidden = true
+        messageLabel.isHidden = true
     }
     
-    private func checkSheduleDay(sheduleArr: [Bool]) -> Bool {
+    private func checkSheduleDay(sheduleArr: [WeekDay]?) -> Bool {
+        guard let sheduleArray = sheduleArr else { return true }
         let currentDayNumber = Calendar.current.component(.weekday, from: currentDate)
         if currentDayNumber == 1 {
-            return sheduleArr[6]
-        }
-        for i in 0...5 {
-            if i == currentDayNumber - 2 {
-                return sheduleArr[i]
+            if sheduleArray.contains(WeekDay(rawValue: 6)!) {
+                return true
+            } else {
+                return false
             }
         }
-        return false
+        if sheduleArray.contains(WeekDay(rawValue: currentDayNumber - 2)!) {
+            return true
+        } else {
+            return false
+        }
     }
     
     private func setVisibleCategoriesForDate() {
@@ -293,33 +293,33 @@ final class TrackersViewController: UIViewController, TrackersViewControllerDele
     
     private func setMessageEmptySearchResult() {
         if visibleCategories.isEmpty {
-            messageImageView?.image = UIImage(named: "not_found")
-            messageLabel?.text = "Ничего не найдено"
+            messageImageView.image = UIImage(named: "not_found")
+            messageLabel.text = "Ничего не найдено"
         }
     }
     
     private func setMessageWhatTracker() {
         if visibleCategories.isEmpty {
-            messageImageView?.image = UIImage(named: "stars")
-            messageLabel?.text = "Что будем отслеживать?"
+            messageImageView.image = UIImage(named: "stars")
+            messageLabel.text = "Что будем отслеживать?"
         }
     }
     
     @objc private func didChangedDatePicker() {
-        updateDateLabel(date: datePicker?.date ?? Date())
-        currentDate = datePicker?.date ?? Date()
+        updateDateLabel(date: datePicker.date)
+        currentDate = datePicker.date
         checkDateAndReloadTrackersCollectionView()
     }
     
     @objc private func didChangedSearchTextField() {
-        setVisibleCategoriesForName(char: searchTextField?.text ?? "")
-        trackersCollectionView?.reloadData()
+        setVisibleCategoriesForName(char: searchTextField.text ?? "")
+        trackersCollectionView.reloadData()
     }
     
     @objc private func didCancelButton() {
-        cancelButton?.isHidden = true
-        searchTextField?.text = ""
-        searchTextField?.resignFirstResponder()
+        cancelButton.isHidden = true
+        searchTextField.text = ""
+        searchTextField.resignFirstResponder()
         checkDateAndReloadTrackersCollectionView()
     }
     
@@ -352,8 +352,8 @@ final class TrackersViewController: UIViewController, TrackersViewControllerDele
                 completedId.insert(id)
                 completedTrackers.append(TrackerRecord(id: id, date: currentDate))
             }
-            trackersCollectionView?.performBatchUpdates({
-                trackersCollectionView?.reloadItems(at: [IndexPath(row: indexPathRow, section: indexPathSection)])
+            trackersCollectionView.performBatchUpdates({
+                trackersCollectionView.reloadItems(at: [IndexPath(row: indexPathRow, section: indexPathSection)])
             })
         }
     }
@@ -410,25 +410,27 @@ extension TrackersViewController: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "trackersCell", for: indexPath) as? TrackersCollectionViewCell
-        cell?.indexPathSection = indexPath.section
-        cell?.indexPathRow = indexPath.row
         let visibleTrack = visibleCategories[indexPath.section].trackers[indexPath.row]
         let color = visibleTrack.color
-        cell?.cardView.backgroundColor = color
-        cell?.emojiLabel.text = visibleTrack.emoji
-        cell?.nameLabel.text = visibleTrack.name
+        cell?.configureTrackersCollectionViewCell(with: TrackersCollectionViewCellModel(
+            indexSection: indexPath.section,
+            indexRow: indexPath.row,
+            cardViewBackgroundColor: color,
+            emojiText: visibleTrack.emoji,
+            nameText: visibleTrack.name
+        ))
         let id = visibleTrack.id
         if completedId.contains(id) {
             let completeTrack = completedTrackers.filter({ $0.id == id })
-            cell?.daysLabel.text = completeTrack.count.days()
+            cell?.configureTrackersCollectionViewCellDaysLabel(with: completeTrack.count.days())
             if completeTrack.filter({ formattedDate(date: $0.date) == formattedDate(date: currentDate) }).count > 0 {
-                cell?.plusButton.setImage(UIImage(named: "complete_button")?.withTintColor(color).image(alpha: 0.3), for: .normal)
+                cell?.configureTrackersCollectionViewCellPlusButtonImage(isCompletedImage: true, color: color)
             } else {
-                cell?.plusButton.setImage(UIImage(named: "plus_button")?.withTintColor(color), for: .normal)
+                cell?.configureTrackersCollectionViewCellPlusButtonImage(isCompletedImage: false, color: color)
             }
         } else {
-            cell?.daysLabel.text = 0.days()
-            cell?.plusButton.setImage(UIImage(named: "plus_button")?.withTintColor(color), for: .normal)
+            cell?.configureTrackersCollectionViewCellDaysLabel(with: 0.days())
+            cell?.configureTrackersCollectionViewCellPlusButtonImage(isCompletedImage: false, color: color)
         }
         return cell!
     }
@@ -442,7 +444,7 @@ extension TrackersViewController: UICollectionViewDataSource {
 
 extension TrackersViewController: UITextFieldDelegate {
     func textFieldDidBeginEditing(_ textField: UITextField) {
-        cancelButton?.isHidden = false
+        cancelButton.isHidden = false
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {

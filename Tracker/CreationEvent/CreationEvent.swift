@@ -8,36 +8,27 @@
 import UIKit
 
 final class CreationEvent {
-    let sheduleIrregullarEvent: [Bool] = [true, true, true, true, true, true, true]
     var name = ""
     var categoryArray: [(title: String, isChecked: Bool)] = []
     var category = ""
-    var shedule: [Bool] = [false, false, false, false, false, false, false]
+    var shedule: [WeekDay] = []
     var color: UIColor? = nil
     var emoji = ""
     
     func sheduleString() -> String {
-        var str = ""
-        var strArr: [String] = []
-        if shedule.contains(false) {
-            for i in 0...shedule.count - 1 {
-                if shedule[i] {
-                    switch i {
-                    case 0: strArr.append("Пн")
-                    case 1: strArr.append("Вт")
-                    case 2: strArr.append("Ср")
-                    case 3: strArr.append("Чт")
-                    case 4: strArr.append("Пт")
-                    case 5: strArr.append("Сб")
-                    default: strArr.append("Вс")
-                    }
-                }
-            }
-            str = strArr.joined(separator: " ,")
+        var namesDaysWeek = ""
+        var namesDaysWeekArray: [String] = []
+        if shedule.count == 7 {
+            namesDaysWeek = "Каждый день"
         } else {
-            str = "Каждый день"
+            shedule.sort{ $0.rawValue < $1.rawValue }
+            shedule.forEach { day in
+                namesDaysWeekArray.append(day.shortName)
+            }
+            namesDaysWeek = namesDaysWeekArray.joined(separator: ", ")
         }
-        return str
+        
+        return namesDaysWeek
     }
     
     func checkedCategory(index: Int) {

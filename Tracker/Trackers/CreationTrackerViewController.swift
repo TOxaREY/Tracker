@@ -9,23 +9,7 @@ import UIKit
 
 final class CreationTrackerViewController: UIViewController {
     weak var delegateTrackers: TrackersViewControllerDelegate?
-    private var habitButton: UIButton?
-    private var irregularEventButton: UIButton?
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        self.title = "Создание трекера"
-        configureViews()
-        addSubviews()
-        makeConstraints()
-    }
-    
-    private func configureViews() {
-        self.view.backgroundColor = .ypWhite
-        self.title = "Создание трекера"
-        self.navigationItem.hidesBackButton = true
-        
+    private let habitButton: UIButton = {
         let habitButton = UIButton()
         habitButton.setTitle("Привычка", for: .normal)
         habitButton.layer.cornerRadius = 10
@@ -34,10 +18,15 @@ final class CreationTrackerViewController: UIViewController {
         habitButton.titleLabel?.font = .ypMedium_16
         habitButton.titleLabel?.textAlignment = .center
         habitButton.setTitleColor(.ypWhite, for: .normal)
-        habitButton.addTarget(self, action: #selector(didTapHabitButton), for: .touchUpInside)
+        habitButton.addTarget(
+            self,
+            action: #selector(didTapHabitButton),
+            for: .touchUpInside
+        )
         habitButton.translatesAutoresizingMaskIntoConstraints = false
-        self.habitButton = habitButton
-        
+        return habitButton
+    }()
+    private let irregularEventButton: UIButton = {
         let irregularEventButton = UIButton()
         irregularEventButton.setTitle("Нерегулярное событие", for: .normal)
         irregularEventButton.layer.cornerRadius = 10
@@ -46,31 +35,44 @@ final class CreationTrackerViewController: UIViewController {
         irregularEventButton.titleLabel?.font = .ypMedium_16
         irregularEventButton.titleLabel?.textAlignment = .center
         irregularEventButton.setTitleColor(.ypWhite, for: .normal)
-        irregularEventButton.addTarget(self, action: #selector(didIrregularEventButton), for: .touchUpInside)
+        irregularEventButton.addTarget(
+            self,
+            action: #selector(didIrregularEventButton),
+            for: .touchUpInside
+        )
         irregularEventButton.translatesAutoresizingMaskIntoConstraints = false
-        self.irregularEventButton = irregularEventButton
+        return irregularEventButton
+    }()
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
         
+        self.view.backgroundColor = .ypWhite
+        self.title = "Создание трекера"
+        self.navigationItem.hidesBackButton = true
+        addSubviews()
+        makeConstraints()
     }
-    
+
     private func addSubviews() {
-        view.addSubview(habitButton ?? UIButton())
-        view.addSubview(irregularEventButton ?? UIButton())
+        view.addSubview(habitButton)
+        view.addSubview(irregularEventButton)
     }
     
     private func makeConstraints() {
         NSLayoutConstraint.activate([
-            habitButton!.heightAnchor.constraint(equalToConstant: 60),
-            habitButton!.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor, constant: -8),
-            habitButton!.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
-            habitButton!.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
-            irregularEventButton!.heightAnchor.constraint(equalToConstant: 60),
-            irregularEventButton!.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor, constant: 8),
-            irregularEventButton!.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
-            irregularEventButton!.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20)
+            habitButton.heightAnchor.constraint(equalToConstant: 60),
+            habitButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor, constant: -8),
+            habitButton.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
+            habitButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
+            irregularEventButton.heightAnchor.constraint(equalToConstant: 60),
+            irregularEventButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor, constant: 8),
+            irregularEventButton.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
+            irregularEventButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20)
         ])
     }
     
-    @objc func didTapHabitButton() {
+    @objc private func didTapHabitButton() {
         weak var pvc = self.presentingViewController
         
         self.dismiss(animated: true) { [weak self] in
@@ -83,7 +85,7 @@ final class CreationTrackerViewController: UIViewController {
         }
     }
     
-    @objc func didIrregularEventButton() {
+    @objc private func didIrregularEventButton() {
         weak var pvc = self.presentingViewController
         
         self.dismiss(animated: true) { [weak self] in

@@ -10,22 +10,7 @@ import UIKit
 final class SheduleViewController: UIViewController {
     weak var delegateDataSource: DataSourceDelegate?
     private var nameTrackerTextField: UITextField?
-    private var readyButton: UIButton?
-    private var tableView: UITableView?
-    private var dataSource: TableViewStaticDataSource!
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        self.title = "Расписание"
-        configureViews()
-        addSubviews()
-        makeConstraints()
-    }
-    
-    private func configureViews() {
-        self.view.backgroundColor = .ypWhite
-        
+    private let readyButton: UIButton = {
         let readyButton = UIButton()
         readyButton.setTitle("Готово", for: .normal)
         readyButton.layer.cornerRadius = 16
@@ -34,14 +19,19 @@ final class SheduleViewController: UIViewController {
         readyButton.titleLabel?.font = .ypMedium_16
         readyButton.titleLabel?.textAlignment = .center
         readyButton.setTitleColor(.ypWhite, for: .normal)
-        readyButton.addTarget(self, action: #selector(didReadyButton), for: .touchUpInside)
+        readyButton.addTarget(
+            self,
+            action: #selector(didReadyButton),
+            for: .touchUpInside
+        )
         readyButton.translatesAutoresizingMaskIntoConstraints = false
-        self.readyButton = readyButton
-        
+        return readyButton
+    }()
+    private lazy var tableView: UITableView = {
         let tableView = UITableView()
         var titles: [String] = []
         WeekDay.allCases.forEach { day in
-            titles.append(day.rawValue)
+            titles.append(day.name)
         }
         dataSource = TableViewStaticDataSource(cells: titles.enumerated().map { SheduleTableViewCell(title: $1, index: $0, creationHabit: delegateDataSource?.creationEvent ?? CreationEvent()) })
         tableView.dataSource = dataSource
@@ -53,28 +43,38 @@ final class SheduleViewController: UIViewController {
         tableView.layer.masksToBounds = true
         tableView.bounces = false
         tableView.translatesAutoresizingMaskIntoConstraints = false
-        self.tableView = tableView
+        return tableView
+    }()
+    private var dataSource: TableViewStaticDataSource!
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        self.view.backgroundColor = .ypWhite
+        self.title = "Расписание"
+        addSubviews()
+        makeConstraints()
     }
     
     private func addSubviews() {
-        view.addSubview(readyButton ?? UIButton())
-        view.addSubview(tableView ?? UITableView())
+        view.addSubview(readyButton)
+        view.addSubview(tableView)
     }
     
     private func makeConstraints() {
         NSLayoutConstraint.activate([
-            tableView!.heightAnchor.constraint(equalToConstant: 525),
-            tableView!.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 24),
-            tableView!.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
-            tableView!.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
-            readyButton!.heightAnchor.constraint(equalToConstant: 60),
-            readyButton!.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-            readyButton!.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
-            readyButton!.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20)
+            tableView.heightAnchor.constraint(equalToConstant: 525),
+            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 24),
+            tableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
+            tableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
+            readyButton.heightAnchor.constraint(equalToConstant: 60),
+            readyButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            readyButton.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
+            readyButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20)
         ])
     }
     
-    @objc func didReadyButton() {
+    @objc private func didReadyButton() {
         delegateDataSource?.setDataSource()
         self.dismiss(animated: true)
     }

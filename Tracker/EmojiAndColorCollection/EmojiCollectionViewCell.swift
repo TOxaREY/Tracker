@@ -14,8 +14,8 @@ let emojiesArray = [
 ]
 
 final class EmojiCollectionViewCell: UICollectionViewCell {
-    var view = UIView()
-    var label = UILabel()
+    private var view = UIView()
+    private var label = UILabel()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -40,6 +40,14 @@ final class EmojiCollectionViewCell: UICollectionViewCell {
             label.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             label.centerYAnchor.constraint(equalTo: view.centerYAnchor)
         ])
+    }
+    
+    func configureEmojiCollectionViewCellLabel(with text: String) {
+        self.label.text = text
+    }
+    
+    func configureEmojiCollectionViewCellBackgroundColor(with color: UIColor) {
+        self.view.backgroundColor = color
     }
     
     required init?(coder: NSCoder) {

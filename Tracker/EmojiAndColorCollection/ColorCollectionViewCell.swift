@@ -17,8 +17,8 @@ let colorsArray = [
 ]
 
 final class ColorCollectionViewCell: UICollectionViewCell {
-    var view = UIView()
-    var colorView = UIView()
+    private var view = UIView()
+    private var colorView = UIView()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -45,6 +45,14 @@ final class ColorCollectionViewCell: UICollectionViewCell {
             colorView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             colorView.centerYAnchor.constraint(equalTo: view.centerYAnchor)
         ])
+    }
+    
+    func configureColorCollectionViewBorderColor(with color: CGColor?) {
+        self.view.layer.borderColor = color
+    }
+    
+    func configureEmojiCollectionViewCellBackgroundColor(with color: UIColor) {
+        self.colorView.backgroundColor = color
     }
     
     required init?(coder: NSCoder) {

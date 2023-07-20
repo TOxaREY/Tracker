@@ -8,9 +8,9 @@
 import UIKit
 
 final class SheduleTableViewCell: UITableViewCell {
-    let sw = UISwitch()
-    var index = Int()
-    var creationHabit: CreationEvent?
+    private let switchDay = UISwitch()
+    private var index = Int()
+    private var creationHabit: CreationEvent?
     
     convenience init(title: String, index: Int, creationHabit: CreationEvent) {
         self.init()
@@ -18,38 +18,42 @@ final class SheduleTableViewCell: UITableViewCell {
         self.creationHabit = creationHabit
         selectionStyle = .none
 
-        let label = UILabel()
-        label.font = .ypRegular_17
-        label.textColor = .ypBlack
-        label.text = title
-        label.translatesAutoresizingMaskIntoConstraints = false
+        let label: UILabel = {
+            let label = UILabel()
+            label.font = .ypRegular_17
+            label.textColor = .ypBlack
+            label.text = title
+            label.translatesAutoresizingMaskIntoConstraints = false
+            return label
+        }()
+
         contentView.addSubview(label)
         
-        sw.onTintColor = .ypBlue
-        sw.translatesAutoresizingMaskIntoConstraints = false
-        sw.addTarget(self, action: #selector(onSwitchValueChanged), for: .valueChanged)
-        if creationHabit.shedule[index] {
-            sw.setOn(true, animated: false)
+        switchDay.onTintColor = .ypBlue
+        switchDay.translatesAutoresizingMaskIntoConstraints = false
+        switchDay.addTarget(self, action: #selector(onSwitchValueChanged), for: .valueChanged)
+        if creationHabit.shedule.contains(WeekDay(rawValue: index)!) {
+            switchDay.setOn(true, animated: false)
         } else {
-            sw.setOn(false, animated: false)
+            switchDay.setOn(false, animated: false)
         }
-        contentView.addSubview(sw)
+        contentView.addSubview(switchDay)
 
         self.backgroundColor = .ypBackground
         
         NSLayoutConstraint.activate([
             label.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             label.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            sw.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            sw.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
+            switchDay.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            switchDay.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
         ])
     }
     
-    @objc func onSwitchValueChanged() {
-        if sw.isOn {
-            creationHabit!.shedule[index] = true
+    @objc private func onSwitchValueChanged() {
+        if switchDay.isOn {
+            creationHabit!.shedule.append(WeekDay(rawValue: index)!)
         } else {
-            creationHabit!.shedule[index] = false
+            creationHabit!.shedule = creationHabit!.shedule.filter { $0.rawValue != index }
         }
     }
 }

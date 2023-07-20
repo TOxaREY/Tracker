@@ -12,20 +12,26 @@ final class CategoryTableViewCell: UITableViewCell {
         self.init()
         selectionStyle = .none
         
-        let label = UILabel()
-        label.font = .ypRegular_17
-        label.textColor = .ypBlack
-        label.text = title
-        label.translatesAutoresizingMaskIntoConstraints = false
+        let label: UILabel = {
+            let label = UILabel()
+            label.font = .ypRegular_17
+            label.textColor = .ypBlack
+            label.text = title
+            label.translatesAutoresizingMaskIntoConstraints = false
+            return label
+        }()
         contentView.addSubview(label)
         
-        let imageView = UIImageView()
-        if isChecked {
-            imageView.image = UIImage(named: "done")
-        } else {
-            imageView.image = UIImage(named: "nil")
-        }
-        imageView.translatesAutoresizingMaskIntoConstraints = false
+        let imageView: UIImageView = {
+            let imageView = UIImageView()
+            if isChecked {
+                imageView.image = UIImage(named: "done")
+            } else {
+                imageView.image = UIImage(named: "nil")
+            }
+            imageView.translatesAutoresizingMaskIntoConstraints = false
+            return imageView
+        }()
         contentView.addSubview(imageView)
         
         self.backgroundColor = .ypBackground

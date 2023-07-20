@@ -8,32 +8,22 @@
 import UIKit
 
 final class TrackersCollectionViewCell: UICollectionViewCell {
-    var cardView = UIView()
-    var emojiLabel = UILabel()
-    var nameLabel = UILabel()
-    var daysLabel = UILabel()
-    var viewEmoji = UIView()
-    var plusButton = UIButton()
-    var indexPathSection = Int()
-    var indexPathRow = Int()
-    
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        
+    private let cardView: UIView = {
+        let cardView = UIView()
         cardView.layer.cornerRadius = 16
         cardView.clipsToBounds = true
         cardView.backgroundColor = .clear
         cardView.translatesAutoresizingMaskIntoConstraints = false
-        
-        viewEmoji.layer.cornerRadius = 12
-        viewEmoji.clipsToBounds = true
-        viewEmoji.backgroundColor = UIColor(hex: "#ffffff4d")
-        viewEmoji.translatesAutoresizingMaskIntoConstraints = false
+        return cardView
+    }()
+    private let emojiLabel: UILabel = {
+        let emojiLabel = UILabel()
         emojiLabel.font = .ypMedium_16
         emojiLabel.translatesAutoresizingMaskIntoConstraints = false
-        viewEmoji.addSubview(emojiLabel)
-        cardView.addSubview(viewEmoji)
-        
+        return emojiLabel
+    }()
+    private let nameLabel: UILabel = {
+        let nameLabel = UILabel()
         nameLabel.font = .ypMedium_12
         nameLabel.textColor = .ypWhite
         nameLabel.textAlignment = .left
@@ -41,18 +31,45 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         nameLabel.lineBreakMode = .byWordWrapping
         nameLabel.sizeToFit()
         nameLabel.translatesAutoresizingMaskIntoConstraints = false
-        cardView.addSubview(nameLabel)
-        
+        return nameLabel
+    }()
+    private let daysLabel: UILabel = {
+        let daysLabel = UILabel()
         daysLabel.font = .ypMedium_12
         daysLabel.textColor = .ypBlack
         daysLabel.textAlignment = .left
         daysLabel.translatesAutoresizingMaskIntoConstraints = false
-        
+        return daysLabel
+    }()
+    private let viewEmoji: UIView = {
+        let viewEmoji = UIView()
+        viewEmoji.layer.cornerRadius = 12
+        viewEmoji.clipsToBounds = true
+        viewEmoji.backgroundColor = UIColor(hex: "#ffffff4d")
+        viewEmoji.translatesAutoresizingMaskIntoConstraints = false
+        return viewEmoji
+    }()
+    private let plusButton: UIButton = {
+        let plusButton = UIButton()
         plusButton.layer.cornerRadius = 17
         plusButton.clipsToBounds = true
         plusButton.translatesAutoresizingMaskIntoConstraints = false
-        plusButton.addTarget(self, action: #selector(didTapPlusButton), for: .touchUpInside)
+        plusButton.addTarget(
+            self,
+            action: #selector(didTapPlusButton),
+            for: .touchUpInside
+        )
+        return plusButton
+    }()
+    private var indexPathSection = Int()
+    private var indexPathRow = Int()
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
         
+        viewEmoji.addSubview(emojiLabel)
+        cardView.addSubview(viewEmoji)
+        cardView.addSubview(nameLabel)
         contentView.addSubview(cardView)
         contentView.addSubview(daysLabel)
         contentView.addSubview(plusButton)
@@ -81,7 +98,27 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         ])
     }
     
-    @objc func didTapPlusButton() {
+    func configureTrackersCollectionViewCell(with model: TrackersCollectionViewCellModel) {
+        self.indexPathSection = model.indexSection
+        self.indexPathRow = model.indexRow
+        self.cardView.backgroundColor = model.cardViewBackgroundColor
+        self.emojiLabel.text = model.emojiText
+        self.nameLabel.text = model.nameText
+    }
+    
+    func configureTrackersCollectionViewCellDaysLabel(with text: String) {
+        self.daysLabel.text = text
+    }
+    
+    func configureTrackersCollectionViewCellPlusButtonImage(isCompletedImage isCompleted: Bool, color: UIColor) {
+        if isCompleted {
+            self.plusButton.setImage(UIImage(named: "complete_button")?.withTintColor(color).image(alpha: 0.3), for: .normal)
+        } else {
+            self.plusButton.setImage(UIImage(named: "plus_button")?.withTintColor(color), for: .normal)
+        }
+    }
+    
+    @objc private func didTapPlusButton() {
         NotificationCenter.default.post(
             name: NSNotification.Name(rawValue: "tapPlusButton"),
             object: nil,
