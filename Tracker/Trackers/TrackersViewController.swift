@@ -14,6 +14,8 @@ final class TrackersViewController: UIViewController, TrackersViewControllerDele
     var currentDate: Date = Date()
     var completedId: Set<UUID> = []
     private var navBar: UINavigationBar?
+    private let trackerCategoryStore = TrackerCategoryStore()
+    private let trackerRecordStore = TrackerRecordStore()
     private let titleLabel: UILabel = {
         let titleLabel = UILabel()
         titleLabel.text = "Трекеры"
@@ -136,6 +138,7 @@ final class TrackersViewController: UIViewController, TrackersViewControllerDele
         super.viewDidLoad()
         
         self.view.backgroundColor = .ypWhite
+        setCategoriesAndRecords()
         makeNavBar()
         addSubviews()
         makeConstraints()
@@ -158,6 +161,13 @@ final class TrackersViewController: UIViewController, TrackersViewControllerDele
     func checkDateAndReloadTrackersCollectionView() {
         setVisibleCategoriesForDate()
         trackersCollectionView.reloadData()
+    }
+    
+    private func setCategoriesAndRecords() {
+        trackerCategoryStore.delegate = self
+        trackerRecordStore.delegate = self
+        categories = trackerCategoryStore.getTrackerCategoty()
+        completedTrackers = trackerRecordStore.getCompletedTrackers()
     }
     
     private func makeNavBar() {
@@ -279,7 +289,7 @@ final class TrackersViewController: UIViewController, TrackersViewControllerDele
         for cat in categories {
             var trackersArr: [Tracker] = []
             for tr in cat.trackers {
-                if tr.name.hasPrefix(char) {
+                if tr.name.lowercased().hasPrefix(char.lowercased()) {
                     trackersArr.append(tr)
                 }
             }
@@ -344,14 +354,15 @@ final class TrackersViewController: UIViewController, TrackersViewControllerDele
                     }
                 }
                 if index != nil {
-                    completedTrackers.remove(at: index!)
+                    trackerRecordStore.removeRecord(id: completedTrackers[index!].id, date: completedTrackers[index!].date)
                 } else {
-                    completedTrackers.append(TrackerRecord(id: id, date: currentDate))
+                    trackerRecordStore.addRecord(id: id, date: currentDate)
                 }
             } else {
                 completedId.insert(id)
-                completedTrackers.append(TrackerRecord(id: id, date: currentDate))
+                trackerRecordStore.addRecord(id: id, date: currentDate)
             }
+            completedTrackers = trackerRecordStore.getCompletedTrackers()
             trackersCollectionView.performBatchUpdates({
                 trackersCollectionView.reloadItems(at: [IndexPath(row: indexPathRow, section: indexPathSection)])
             })
@@ -420,6 +431,9 @@ extension TrackersViewController: UICollectionViewDataSource {
             nameText: visibleTrack.name
         ))
         let id = visibleTrack.id
+        completedTrackers.forEach { tracker in
+            completedId.insert(tracker.id)
+        }
         if completedId.contains(id) {
             let completeTrack = completedTrackers.filter({ $0.id == id })
             cell?.configureTrackersCollectionViewCellDaysLabel(with: completeTrack.count.days())
@@ -450,5 +464,18 @@ extension TrackersViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         return true
+    }
+}
+
+extension TrackersViewController: TrackerCategoryStoreDelegate {
+    func didCategoriesUpdate() {
+        categories = trackerCategoryStore.getTrackerCategoty()
+    }
+}
+
+extension TrackersViewController: TrackerRecordStoreDelegate {
+    func didRecordsUpdate() {
+        completedTrackers = trackerRecordStore.getCompletedTrackers()
+        checkDateAndReloadTrackersCollectionView()
     }
 }

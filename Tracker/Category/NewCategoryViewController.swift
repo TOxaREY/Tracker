@@ -9,21 +9,7 @@ import UIKit
 
 final class NewCategoryViewController: UIViewController {
     weak var delegateDataSource: DataSourceDelegate?
-    private lazy var nameCategoryTextField: UITextField = {
-        let nameCategoryTextField = UITextField()
-        nameCategoryTextField.delegate = self
-        nameCategoryTextField.attributedPlaceholder = NSAttributedString(string: "Введите название категории", attributes: [NSAttributedString.Key.foregroundColor: UIColor.ypGray])
-        nameCategoryTextField.backgroundColor = .ypBackground
-        nameCategoryTextField.font = .ypRegular_17
-        nameCategoryTextField.textColor = .ypBlack
-        nameCategoryTextField.layer.cornerRadius = 16.0
-        nameCategoryTextField.layer.masksToBounds = true
-        let view = UIView(frame: CGRect(x: 0, y: 0, width: 16, height: 75))
-        nameCategoryTextField.leftViewMode = .always
-        nameCategoryTextField.leftView = view
-        nameCategoryTextField.translatesAutoresizingMaskIntoConstraints = false
-        return nameCategoryTextField
-    }()
+    private let trackerCategoryStore = TrackerCategoryStore()
     private let readyButton: UIButton = {
         let readyButton = UIButton()
         readyButton.setTitle("Готово", for: .normal)
@@ -41,6 +27,21 @@ final class NewCategoryViewController: UIViewController {
         readyButton.isEnabled = false
         readyButton.translatesAutoresizingMaskIntoConstraints = false
         return readyButton
+    }()
+    private lazy var nameCategoryTextField: UITextField = {
+        let nameCategoryTextField = UITextField()
+        nameCategoryTextField.delegate = self
+        nameCategoryTextField.attributedPlaceholder = NSAttributedString(string: "Введите название категории", attributes: [NSAttributedString.Key.foregroundColor: UIColor.ypGray])
+        nameCategoryTextField.backgroundColor = .ypBackground
+        nameCategoryTextField.font = .ypRegular_17
+        nameCategoryTextField.textColor = .ypBlack
+        nameCategoryTextField.layer.cornerRadius = 16.0
+        nameCategoryTextField.layer.masksToBounds = true
+        let view = UIView(frame: CGRect(x: 0, y: 0, width: 16, height: 75))
+        nameCategoryTextField.leftViewMode = .always
+        nameCategoryTextField.leftView = view
+        nameCategoryTextField.translatesAutoresizingMaskIntoConstraints = false
+        return nameCategoryTextField
     }()
 
     override func viewDidLoad() {
@@ -85,6 +86,7 @@ final class NewCategoryViewController: UIViewController {
             }
         }
         delegateDataSource?.setDataSource()
+        trackerCategoryStore.addCategoty(title: nameCategoryTextField.text!)
         self.dismiss(animated: true)
     }
 }
