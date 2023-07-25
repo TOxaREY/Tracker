@@ -9,7 +9,7 @@ import UIKit
 
 final class CreationTrackerViewController: UIViewController {
     weak var delegateTrackers: TrackersViewControllerDelegate?
-    private let habitButton: UIButton = {
+    private lazy var habitButton: UIButton = {
         let habitButton = UIButton()
         habitButton.setTitle("Привычка", for: .normal)
         habitButton.layer.cornerRadius = 10
@@ -26,7 +26,7 @@ final class CreationTrackerViewController: UIViewController {
         habitButton.translatesAutoresizingMaskIntoConstraints = false
         return habitButton
     }()
-    private let irregularEventButton: UIButton = {
+    private lazy var irregularEventButton: UIButton = {
         let irregularEventButton = UIButton()
         irregularEventButton.setTitle("Нерегулярное событие", for: .normal)
         irregularEventButton.layer.cornerRadius = 10

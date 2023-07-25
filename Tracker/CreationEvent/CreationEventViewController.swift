@@ -26,12 +26,12 @@ class CreationEventViewController: UIViewController, DataSourceDelegate {
     private let trackerCategoryStore = TrackerCategoryStore()
     private var isLimitSimbol = false
     private var containerHeightAnchorConstraint: NSLayoutConstraint?
-    private let container: UIView = {
+    private lazy var container: UIView = {
         let container = UIView()
         container.translatesAutoresizingMaskIntoConstraints = false
         return container
     }()
-    private let scrollView: UIScrollView = {
+    private lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.backgroundColor = .ypWhite
         scrollView.translatesAutoresizingMaskIntoConstraints = false
@@ -63,7 +63,7 @@ class CreationEventViewController: UIViewController, DataSourceDelegate {
         self.clearButton = btnClear
         return nameTrackerTextField
     }()
-    private let limitSimbolLabel: UILabel = {
+    private lazy var limitSimbolLabel: UILabel = {
         let limitSimbolLabel = UILabel()
         limitSimbolLabel.text = "Ограничение 38 символов"
         limitSimbolLabel.textColor = .ypRed
@@ -75,7 +75,7 @@ class CreationEventViewController: UIViewController, DataSourceDelegate {
     }()
     private var clearButton: UIButton?
     private var tableViewTopAnchorConstraint: NSLayoutConstraint?
-    private let emojiLabel: UILabel = {
+    private lazy var emojiLabel: UILabel = {
         let emojiLabel = UILabel()
         emojiLabel.text = "Emoji"
         emojiLabel.textColor = .ypBlack
@@ -96,7 +96,7 @@ class CreationEventViewController: UIViewController, DataSourceDelegate {
         return emojiesCollectionView
     }()
     private let emojies = emojiesArray
-    private let colorLabel: UILabel = {
+    private lazy var colorLabel: UILabel = {
         let colorLabel = UILabel()
         colorLabel.text = "Цвет"
         colorLabel.textColor = .ypBlack
@@ -419,7 +419,7 @@ extension CreationEventViewController: UICollectionViewDelegate {
 
 extension CreationEventViewController: UITextFieldDelegate {
     func textFieldDidChangeSelection(_ textField: UITextField) {
-        if textField.text != "" {
+        if !textField.text!.isEmpty {
             clearButton?.isHidden = false
             if textField.text!.count >= 38 && !isLimitSimbol {
                 textField.text?.removeLast()

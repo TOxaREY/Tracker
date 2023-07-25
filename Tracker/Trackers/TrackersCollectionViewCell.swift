@@ -8,7 +8,7 @@
 import UIKit
 
 final class TrackersCollectionViewCell: UICollectionViewCell {
-    private let cardView: UIView = {
+    private lazy var cardView: UIView = {
         let cardView = UIView()
         cardView.layer.cornerRadius = 16
         cardView.clipsToBounds = true
@@ -16,13 +16,13 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         cardView.translatesAutoresizingMaskIntoConstraints = false
         return cardView
     }()
-    private let emojiLabel: UILabel = {
+    private lazy var emojiLabel: UILabel = {
         let emojiLabel = UILabel()
         emojiLabel.font = .ypMedium_16
         emojiLabel.translatesAutoresizingMaskIntoConstraints = false
         return emojiLabel
     }()
-    private let nameLabel: UILabel = {
+    private lazy var nameLabel: UILabel = {
         let nameLabel = UILabel()
         nameLabel.font = .ypMedium_12
         nameLabel.textColor = .ypWhite
@@ -33,7 +33,7 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         nameLabel.translatesAutoresizingMaskIntoConstraints = false
         return nameLabel
     }()
-    private let daysLabel: UILabel = {
+    private lazy var daysLabel: UILabel = {
         let daysLabel = UILabel()
         daysLabel.font = .ypMedium_12
         daysLabel.textColor = .ypBlack
@@ -41,7 +41,7 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         daysLabel.translatesAutoresizingMaskIntoConstraints = false
         return daysLabel
     }()
-    private let viewEmoji: UIView = {
+    private lazy var viewEmoji: UIView = {
         let viewEmoji = UIView()
         viewEmoji.layer.cornerRadius = 12
         viewEmoji.clipsToBounds = true
@@ -49,7 +49,7 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         viewEmoji.translatesAutoresizingMaskIntoConstraints = false
         return viewEmoji
     }()
-    private let plusButton: UIButton = {
+    private lazy var plusButton: UIButton = {
         let plusButton = UIButton()
         plusButton.layer.cornerRadius = 17
         plusButton.clipsToBounds = true

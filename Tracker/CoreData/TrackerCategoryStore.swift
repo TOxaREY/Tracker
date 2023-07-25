@@ -81,7 +81,7 @@ final class TrackerCategoryStore: NSObject {
             let categories = try context.fetch(request)
             do {
                 try categories.forEach { category in
-                    trackers = try category.trackers?.map({ try trackerStore.getTracker(tracker: $0 as! TrackerCoreData) }) ?? []
+                    trackers = try category.trackers?.map({ try trackerStore.getTracker(set: $0) }) ?? []
                     trackerCategory.append(TrackerCategory(title: category.title ?? "", trackers: trackers))
                 }
             } catch let error {

@@ -10,7 +10,7 @@ import UIKit
 final class NewCategoryViewController: UIViewController {
     weak var delegateDataSource: DataSourceDelegate?
     private let trackerCategoryStore = TrackerCategoryStore()
-    private let readyButton: UIButton = {
+    private lazy var readyButton: UIButton = {
         let readyButton = UIButton()
         readyButton.setTitle("Готово", for: .normal)
         readyButton.layer.cornerRadius = 16
@@ -79,14 +79,15 @@ final class NewCategoryViewController: UIViewController {
     }
     
     @objc private func didReadyButton() {
-        delegateDataSource?.creationEvent.categoryArray.append((title: nameCategoryTextField.text!, isChecked: true))
+        guard let nameCategory = nameCategoryTextField.text else { return }
+        delegateDataSource?.creationEvent.categoryArray.append((title: nameCategory, isChecked: true))
         if delegateDataSource?.creationEvent.categoryArray.count != 1 {
             for i in 0...delegateDataSource!.creationEvent.categoryArray.count - 2 {
                 delegateDataSource?.creationEvent.categoryArray[i].isChecked = false
             }
         }
         delegateDataSource?.setDataSource()
-        trackerCategoryStore.addCategoty(title: nameCategoryTextField.text!)
+        trackerCategoryStore.addCategoty(title: nameCategory)
         self.dismiss(animated: true)
     }
 }

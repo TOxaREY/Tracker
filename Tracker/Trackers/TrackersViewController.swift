@@ -16,7 +16,7 @@ final class TrackersViewController: UIViewController, TrackersViewControllerDele
     private var navBar: UINavigationBar?
     private let trackerCategoryStore = TrackerCategoryStore()
     private let trackerRecordStore = TrackerRecordStore()
-    private let titleLabel: UILabel = {
+    private lazy var titleLabel: UILabel = {
         let titleLabel = UILabel()
         titleLabel.text = "Трекеры"
         titleLabel.textColor = .ypBlack
@@ -25,7 +25,7 @@ final class TrackersViewController: UIViewController, TrackersViewControllerDele
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         return titleLabel
     }()
-    private let dateLabel: UILabel = {
+    private lazy var dateLabel: UILabel = {
         let dateLabel = UILabel()
         dateLabel.backgroundColor = .ypBackgroundTrackersField
         dateLabel.textColor = .ypBlack
@@ -36,7 +36,7 @@ final class TrackersViewController: UIViewController, TrackersViewControllerDele
         dateLabel.translatesAutoresizingMaskIntoConstraints = false
         return dateLabel
     }()
-    private let datePicker: UIDatePicker = {
+    private lazy var datePicker: UIDatePicker = {
         let datePicker = UIDatePicker()
         datePicker.preferredDatePickerStyle = .compact
         datePicker.datePickerMode = .date
@@ -54,7 +54,7 @@ final class TrackersViewController: UIViewController, TrackersViewControllerDele
         datePicker.translatesAutoresizingMaskIntoConstraints = false
         return datePicker
     }()
-    private let stackView: UIStackView = {
+    private lazy var stackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .horizontal
         stackView.distribution = .fill
@@ -80,7 +80,7 @@ final class TrackersViewController: UIViewController, TrackersViewControllerDele
         searchTextField.translatesAutoresizingMaskIntoConstraints = false
         return searchTextField
     }()
-    private let cancelButton: UIButton = {
+    private lazy var cancelButton: UIButton = {
         let cancelButton = UIButton()
         cancelButton.backgroundColor = .clear
         cancelButton.titleLabel?.font = .ypRegular_17
@@ -97,14 +97,14 @@ final class TrackersViewController: UIViewController, TrackersViewControllerDele
         cancelButton.translatesAutoresizingMaskIntoConstraints = false
         return cancelButton
     }()
-    private let messageImageView: UIImageView = {
+    private lazy var messageImageView: UIImageView = {
         let messageImageView = UIImageView()
         messageImageView.contentMode = .scaleAspectFit
         messageImageView.isHidden = true
         messageImageView.translatesAutoresizingMaskIntoConstraints = false
         return messageImageView
     }()
-    private let messageLabel: UILabel = {
+    private lazy var messageLabel: UILabel = {
         let messageLabel = UILabel()
         messageLabel.text = "Что будем отслеживать?"
         messageLabel.textColor = .ypBlack
@@ -354,7 +354,9 @@ final class TrackersViewController: UIViewController, TrackersViewControllerDele
                     }
                 }
                 if index != nil {
-                    trackerRecordStore.removeRecord(id: completedTrackers[index!].id, date: completedTrackers[index!].date)
+                    if let completedTracker = completedTrackers[safe: index!] {
+                        trackerRecordStore.removeRecord(id: completedTracker.id, date: completedTracker.date)
+                    }
                 } else {
                     trackerRecordStore.addRecord(id: id, date: currentDate)
                 }

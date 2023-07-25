@@ -8,6 +8,7 @@
 import Foundation
 
 enum TrackerCoreDataError: Error {
+    case trackerCoreDataClassInvalid
     case decodingErrorInvalidId
     case decodingErrorInvalidName
     case decodingErrorInvalidColor
