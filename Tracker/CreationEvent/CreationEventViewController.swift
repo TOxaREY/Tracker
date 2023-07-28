@@ -165,7 +165,6 @@ class CreationEventViewController: UIViewController, DataSourceDelegate {
         super.viewDidLoad()
         
         self.view.backgroundColor = .ypWhite
-        addCategory()
         addSubviews()
         makeConstraints()
         setDataSource()
@@ -184,7 +183,7 @@ class CreationEventViewController: UIViewController, DataSourceDelegate {
     }
     
     func checkAllFillField(isHabit: Bool) {
-        if creationEvent.name != "" && creationEvent.category != "" && !isHabit && creationEvent.emoji != "" && creationEvent.color != nil && !isLimitSimbol {
+        if creationEvent.name != "" && creationEvent.categoryName != "" && !isHabit && creationEvent.emoji != "" && creationEvent.color != nil && !isLimitSimbol {
             createButton.backgroundColor = .ypBlack
             createButton.isEnabled = true
         } else {
@@ -195,7 +194,7 @@ class CreationEventViewController: UIViewController, DataSourceDelegate {
     
     func addTracker(shedule: [WeekDay]?) {
         trackerCategoryStore.addTracker(
-            title: creationEvent.category,
+            title: creationEvent.categoryName,
             tracker: Tracker(
                 id: UUID(),
                 name: creationEvent.name,
@@ -207,7 +206,7 @@ class CreationEventViewController: UIViewController, DataSourceDelegate {
     
     func setDataSource() {
         let items: [(title: String, subtitle: String)] = [
-            ("Категория", creationEvent.category),
+            ("Категория", creationEvent.categoryName),
             ("Расписание", creationEvent.sheduleString())
         ]
         dataSource = TableViewStaticDataSource(cells: items.map { CreationTableViewCell(title: $0.title, subtitle: $0.subtitle) })
@@ -295,14 +294,7 @@ class CreationEventViewController: UIViewController, DataSourceDelegate {
             createButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20)
         ])
     }
-    
-    private func addCategory() {
-        guard let category = delegateTrackers?.categories else { return }
-        for cat in category {
-            creationEvent.categoryArray.append((title: cat.title, isChecked: false))
-        }
-    }
-    
+
     @objc private func didCancelButton() {
         self.dismiss(animated: true)
     }

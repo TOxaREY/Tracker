@@ -80,14 +80,8 @@ final class NewCategoryViewController: UIViewController {
     
     @objc private func didReadyButton() {
         guard let nameCategory = nameCategoryTextField.text else { return }
-        delegateDataSource?.creationEvent.categoryArray.append((title: nameCategory, isChecked: true))
-        if delegateDataSource?.creationEvent.categoryArray.count != 1 {
-            for i in 0...delegateDataSource!.creationEvent.categoryArray.count - 2 {
-                delegateDataSource?.creationEvent.categoryArray[i].isChecked = false
-            }
-        }
-        delegateDataSource?.setDataSource()
-        trackerCategoryStore.addCategoty(title: nameCategory)
+        trackerCategoryStore.addCategory(title: nameCategory)
+        delegateDataSource?.creationEvent.categoryName = nameCategory
         self.dismiss(animated: true)
     }
 }

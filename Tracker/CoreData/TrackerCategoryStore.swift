@@ -62,9 +62,20 @@ final class TrackerCategoryStore: NSObject {
         }
     }
     
-    func addCategoty(title: String) {
+    func addCategory(title: String) {
+        let request = NSFetchRequest<TrackerCategoryCoreData>(entityName: "TrackerCategoryCoreData")
+        request.returnsObjectsAsFaults = false
+        do {
+            let categories = try context.fetch(request)
+            categories.forEach { category in
+                category.isChecked = false
+            }
+        } catch let error {
+            print(error)
+        }
         let trackerCategotyCoreData = TrackerCategoryCoreData(context: context)
         trackerCategotyCoreData.title = title
+        trackerCategotyCoreData.isChecked = true
         do {
             try context.save()
         } catch let error {
@@ -72,7 +83,67 @@ final class TrackerCategoryStore: NSObject {
         }
     }
     
-    func getTrackerCategoty() -> [TrackerCategory] {
+    func setSelectedCategory(title: String) {
+        let request = NSFetchRequest<TrackerCategoryCoreData>(entityName: "TrackerCategoryCoreData")
+        request.returnsObjectsAsFaults = false
+        do {
+            let categories = try context.fetch(request)
+            categories.forEach { category in
+                if category.title == title {
+                    category.isChecked = true
+                } else {
+                    category.isChecked = false
+                }
+            }
+        } catch let error {
+            print(error)
+        }
+        
+        do {
+            try context.save()
+        } catch let error {
+            print(error)
+        }
+    }
+    
+    func getSelectedCategory() -> String {
+        var result: String = ""
+        let request = NSFetchRequest<TrackerCategoryCoreData>(entityName: "TrackerCategoryCoreData")
+        request.returnsObjectsAsFaults = false
+        request.predicate = NSPredicate(
+            format: "%K == %@",
+            #keyPath(TrackerCategoryCoreData.isChecked),
+            NSNumber(value: true)
+        )
+        do {
+            if let checkedCategory = try context.fetch(request).first {
+                result = checkedCategory.title ?? ""
+            } else {
+                return result
+            }
+        } catch let error {
+            print(error)
+        }
+        return result
+    }
+    
+    func getCategories() -> [(title: String, isChecked: Bool)] {
+        var result: [(title: String, isChecked: Bool)] = []
+        let request = NSFetchRequest<TrackerCategoryCoreData>(entityName: "TrackerCategoryCoreData")
+        request.returnsObjectsAsFaults = false
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \TrackerCategoryCoreData.title, ascending: true)]
+        do {
+            let categories = try context.fetch(request)
+            categories.forEach { category in
+                result.append((title: category.title ?? "", isChecked: category.isChecked))
+            }
+        } catch let error {
+            print(error)
+        }
+        return result
+    }
+    
+    func getTrackerCategory() -> [TrackerCategory] {
         var trackerCategory: [TrackerCategory] = []
         var trackers: [Tracker] = []
         let request = NSFetchRequest<TrackerCategoryCoreData>(entityName: "TrackerCategoryCoreData")

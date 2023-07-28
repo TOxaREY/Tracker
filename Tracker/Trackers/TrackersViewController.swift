@@ -166,7 +166,7 @@ final class TrackersViewController: UIViewController, TrackersViewControllerDele
     private func setCategoriesAndRecords() {
         trackerCategoryStore.delegate = self
         trackerRecordStore.delegate = self
-        categories = trackerCategoryStore.getTrackerCategoty()
+        categories = trackerCategoryStore.getTrackerCategory()
         completedTrackers = trackerRecordStore.getCompletedTrackers()
     }
     
@@ -471,7 +471,7 @@ extension TrackersViewController: UITextFieldDelegate {
 
 extension TrackersViewController: TrackerCategoryStoreDelegate {
     func didCategoriesUpdate() {
-        categories = trackerCategoryStore.getTrackerCategoty()
+        categories = trackerCategoryStore.getTrackerCategory()
     }
 }
 
