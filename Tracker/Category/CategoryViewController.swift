@@ -10,14 +10,14 @@ import UIKit
 final class CategoryViewController: UIViewController {
     weak var delegateDataSource: DataSourceDelegate?
     private let maxHeightTableView = Int(UIScreen.main.bounds.height - 286)
-    private let combinedHabitsEventsImageView: UIImageView = {
+    private lazy var combinedHabitsEventsImageView: UIImageView = {
         let combinedHabitsEventsImage = UIImage(named: "stars")
         let combinedHabitsEventsImageView = UIImageView(image: combinedHabitsEventsImage)
         combinedHabitsEventsImageView.contentMode = .scaleAspectFit
         combinedHabitsEventsImageView.translatesAutoresizingMaskIntoConstraints = false
         return combinedHabitsEventsImageView
     }()
-    private let combinedHabitsEventsLabel: UILabel = {
+    private lazy var combinedHabitsEventsLabel: UILabel = {
         let combinedHabitsEventsLabel = UILabel()
         combinedHabitsEventsLabel.numberOfLines = 0
         combinedHabitsEventsLabel.text = "Привычки и события можно\nобъединить по смыслу"
@@ -28,7 +28,7 @@ final class CategoryViewController: UIViewController {
         return combinedHabitsEventsLabel
     }()
     private var dataSource: TableViewStaticDataSource!
-    private let addCategoryButton: UIButton = {
+    private lazy var addCategoryButton: UIButton = {
         let addCategoryButton = UIButton()
         addCategoryButton.setTitle("Добавить категорию", for: .normal)
         addCategoryButton.layer.cornerRadius = 16

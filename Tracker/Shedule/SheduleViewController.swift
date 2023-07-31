@@ -10,7 +10,7 @@ import UIKit
 final class SheduleViewController: UIViewController {
     weak var delegateDataSource: DataSourceDelegate?
     private var nameTrackerTextField: UITextField?
-    private let readyButton: UIButton = {
+    private lazy var readyButton: UIButton = {
         let readyButton = UIButton()
         readyButton.setTitle("Готово", for: .normal)
         readyButton.layer.cornerRadius = 16

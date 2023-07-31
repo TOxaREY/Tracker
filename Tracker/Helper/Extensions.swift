@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import CoreData
 
 extension UIColor {
     static var ypBlue: UIColor { UIColor(named: "YP Blue")! }
@@ -98,3 +99,58 @@ extension Int {
     }
 }
 
+extension Collection {
+    subscript (safe index: Index) -> Element? {
+        return indices.contains(index) ? self[index] : nil
+    }
+}
+
+extension AppDelegate {
+    func setNavigationBarAndTabBarAppearance() {
+        if #available(iOS 15, *) {
+            let navigationBarAppearance = UINavigationBarAppearance()
+            navigationBarAppearance.configureWithOpaqueBackground()
+            navigationBarAppearance.titleTextAttributes = [
+                NSAttributedString.Key.font: UIFont.ypMedium_16,
+                NSAttributedString.Key.foregroundColor: UIColor.ypBlack
+            ]
+            navigationBarAppearance.backgroundColor = UIColor.ypWhite
+            navigationBarAppearance.shadowColor = .clear
+            UINavigationBar.appearance().standardAppearance = navigationBarAppearance
+            UINavigationBar.appearance().compactAppearance = navigationBarAppearance
+            UINavigationBar.appearance().scrollEdgeAppearance = navigationBarAppearance
+            
+            let tabBarApperance = UITabBarAppearance()
+            tabBarApperance.configureWithOpaqueBackground()
+            tabBarApperance.backgroundImage = UIImage.colorForNavBar(color: .ypWhite)
+            tabBarApperance.shadowImage = UIImage.colorForNavBar(color: UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.3))
+            UITabBar.appearance().scrollEdgeAppearance = tabBarApperance
+            UITabBar.appearance().standardAppearance = tabBarApperance
+        } else {
+            UINavigationBar.appearance().setBackgroundImage(UIImage(), for: UIBarPosition.any, barMetrics: UIBarMetrics.default)
+            UINavigationBar.appearance().shadowImage = UIImage()
+            UINavigationBar.appearance().tintColor = UIColor.ypWhite
+            UINavigationBar.appearance().barTintColor = UIColor.ypWhite
+            UINavigationBar.appearance().isTranslucent = false
+            UINavigationBar.appearance().clipsToBounds = false
+            UINavigationBar.appearance().backgroundColor = UIColor.ypWhite
+            UINavigationBar.appearance().titleTextAttributes = [
+                NSAttributedString.Key.font: UIFont.ypMedium_16,
+                NSAttributedString.Key.foregroundColor: UIColor.ypBlack
+            ]
+            
+            UITabBar.appearance().backgroundImage = UIImage.colorForNavBar(color: .ypWhite)
+            UITabBar.appearance().shadowImage = UIImage.colorForNavBar(color: UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.3))
+        }
+    }
+    
+    func setPersistentContainer() -> NSPersistentContainer {
+        let container = NSPersistentContainer(name: "TrackerModel")
+        container.loadPersistentStores(completionHandler: { (storeDescription, error) in
+            if let error = error as NSError? {
+                assertionFailure("Unresolved error \(error), \(error.userInfo)")
+            }
+        })
+        return container
+    }
+}

@@ -14,7 +14,9 @@ final class TrackersViewController: UIViewController, TrackersViewControllerDele
     var currentDate: Date = Date()
     var completedId: Set<UUID> = []
     private var navBar: UINavigationBar?
-    private let titleLabel: UILabel = {
+    private let trackerCategoryStore = TrackerCategoryStore()
+    private let trackerRecordStore = TrackerRecordStore()
+    private lazy var titleLabel: UILabel = {
         let titleLabel = UILabel()
         titleLabel.text = "Трекеры"
         titleLabel.textColor = .ypBlack
@@ -23,7 +25,7 @@ final class TrackersViewController: UIViewController, TrackersViewControllerDele
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         return titleLabel
     }()
-    private let dateLabel: UILabel = {
+    private lazy var dateLabel: UILabel = {
         let dateLabel = UILabel()
         dateLabel.backgroundColor = .ypBackgroundTrackersField
         dateLabel.textColor = .ypBlack
@@ -34,7 +36,7 @@ final class TrackersViewController: UIViewController, TrackersViewControllerDele
         dateLabel.translatesAutoresizingMaskIntoConstraints = false
         return dateLabel
     }()
-    private let datePicker: UIDatePicker = {
+    private lazy var datePicker: UIDatePicker = {
         let datePicker = UIDatePicker()
         datePicker.preferredDatePickerStyle = .compact
         datePicker.datePickerMode = .date
@@ -52,7 +54,7 @@ final class TrackersViewController: UIViewController, TrackersViewControllerDele
         datePicker.translatesAutoresizingMaskIntoConstraints = false
         return datePicker
     }()
-    private let stackView: UIStackView = {
+    private lazy var stackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .horizontal
         stackView.distribution = .fill
@@ -78,7 +80,7 @@ final class TrackersViewController: UIViewController, TrackersViewControllerDele
         searchTextField.translatesAutoresizingMaskIntoConstraints = false
         return searchTextField
     }()
-    private let cancelButton: UIButton = {
+    private lazy var cancelButton: UIButton = {
         let cancelButton = UIButton()
         cancelButton.backgroundColor = .clear
         cancelButton.titleLabel?.font = .ypRegular_17
@@ -95,14 +97,14 @@ final class TrackersViewController: UIViewController, TrackersViewControllerDele
         cancelButton.translatesAutoresizingMaskIntoConstraints = false
         return cancelButton
     }()
-    private let messageImageView: UIImageView = {
+    private lazy var messageImageView: UIImageView = {
         let messageImageView = UIImageView()
         messageImageView.contentMode = .scaleAspectFit
         messageImageView.isHidden = true
         messageImageView.translatesAutoresizingMaskIntoConstraints = false
         return messageImageView
     }()
-    private let messageLabel: UILabel = {
+    private lazy var messageLabel: UILabel = {
         let messageLabel = UILabel()
         messageLabel.text = "Что будем отслеживать?"
         messageLabel.textColor = .ypBlack
@@ -136,6 +138,7 @@ final class TrackersViewController: UIViewController, TrackersViewControllerDele
         super.viewDidLoad()
         
         self.view.backgroundColor = .ypWhite
+        setCategoriesAndRecords()
         makeNavBar()
         addSubviews()
         makeConstraints()
@@ -158,6 +161,13 @@ final class TrackersViewController: UIViewController, TrackersViewControllerDele
     func checkDateAndReloadTrackersCollectionView() {
         setVisibleCategoriesForDate()
         trackersCollectionView.reloadData()
+    }
+    
+    private func setCategoriesAndRecords() {
+        trackerCategoryStore.delegate = self
+        trackerRecordStore.delegate = self
+        categories = trackerCategoryStore.getTrackerCategoty()
+        completedTrackers = trackerRecordStore.getCompletedTrackers()
     }
     
     private func makeNavBar() {
@@ -279,7 +289,7 @@ final class TrackersViewController: UIViewController, TrackersViewControllerDele
         for cat in categories {
             var trackersArr: [Tracker] = []
             for tr in cat.trackers {
-                if tr.name.hasPrefix(char) {
+                if tr.name.lowercased().hasPrefix(char.lowercased()) {
                     trackersArr.append(tr)
                 }
             }
@@ -344,14 +354,17 @@ final class TrackersViewController: UIViewController, TrackersViewControllerDele
                     }
                 }
                 if index != nil {
-                    completedTrackers.remove(at: index!)
+                    if let completedTracker = completedTrackers[safe: index!] {
+                        trackerRecordStore.removeRecord(id: completedTracker.id, date: completedTracker.date)
+                    }
                 } else {
-                    completedTrackers.append(TrackerRecord(id: id, date: currentDate))
+                    trackerRecordStore.addRecord(id: id, date: currentDate)
                 }
             } else {
                 completedId.insert(id)
-                completedTrackers.append(TrackerRecord(id: id, date: currentDate))
+                trackerRecordStore.addRecord(id: id, date: currentDate)
             }
+            completedTrackers = trackerRecordStore.getCompletedTrackers()
             trackersCollectionView.performBatchUpdates({
                 trackersCollectionView.reloadItems(at: [IndexPath(row: indexPathRow, section: indexPathSection)])
             })
@@ -420,6 +433,9 @@ extension TrackersViewController: UICollectionViewDataSource {
             nameText: visibleTrack.name
         ))
         let id = visibleTrack.id
+        completedTrackers.forEach { tracker in
+            completedId.insert(tracker.id)
+        }
         if completedId.contains(id) {
             let completeTrack = completedTrackers.filter({ $0.id == id })
             cell?.configureTrackersCollectionViewCellDaysLabel(with: completeTrack.count.days())
@@ -450,5 +466,18 @@ extension TrackersViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         return true
+    }
+}
+
+extension TrackersViewController: TrackerCategoryStoreDelegate {
+    func didCategoriesUpdate() {
+        categories = trackerCategoryStore.getTrackerCategoty()
+    }
+}
+
+extension TrackersViewController: TrackerRecordStoreDelegate {
+    func didRecordsUpdate() {
+        completedTrackers = trackerRecordStore.getCompletedTrackers()
+        checkDateAndReloadTrackersCollectionView()
     }
 }

@@ -23,14 +23,15 @@ class CreationEventViewController: UIViewController, DataSourceDelegate {
         tableView.translatesAutoresizingMaskIntoConstraints = false
         return tableView
     }()
+    private let trackerCategoryStore = TrackerCategoryStore()
     private var isLimitSimbol = false
     private var containerHeightAnchorConstraint: NSLayoutConstraint?
-    private let container: UIView = {
+    private lazy var container: UIView = {
         let container = UIView()
         container.translatesAutoresizingMaskIntoConstraints = false
         return container
     }()
-    private let scrollView: UIScrollView = {
+    private lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.backgroundColor = .ypWhite
         scrollView.translatesAutoresizingMaskIntoConstraints = false
@@ -62,7 +63,7 @@ class CreationEventViewController: UIViewController, DataSourceDelegate {
         self.clearButton = btnClear
         return nameTrackerTextField
     }()
-    private let limitSimbolLabel: UILabel = {
+    private lazy var limitSimbolLabel: UILabel = {
         let limitSimbolLabel = UILabel()
         limitSimbolLabel.text = "Ограничение 38 символов"
         limitSimbolLabel.textColor = .ypRed
@@ -74,7 +75,7 @@ class CreationEventViewController: UIViewController, DataSourceDelegate {
     }()
     private var clearButton: UIButton?
     private var tableViewTopAnchorConstraint: NSLayoutConstraint?
-    private let emojiLabel: UILabel = {
+    private lazy var emojiLabel: UILabel = {
         let emojiLabel = UILabel()
         emojiLabel.text = "Emoji"
         emojiLabel.textColor = .ypBlack
@@ -95,7 +96,7 @@ class CreationEventViewController: UIViewController, DataSourceDelegate {
         return emojiesCollectionView
     }()
     private let emojies = emojiesArray
-    private let colorLabel: UILabel = {
+    private lazy var colorLabel: UILabel = {
         let colorLabel = UILabel()
         colorLabel.text = "Цвет"
         colorLabel.textColor = .ypBlack
@@ -193,22 +194,15 @@ class CreationEventViewController: UIViewController, DataSourceDelegate {
     }
     
     func addTracker(shedule: [WeekDay]?) {
-        guard let categories = delegateTrackers?.categories else { return }
-        let oldCategories = categories
-        var newCategories: [TrackerCategory] = []
-        for category in oldCategories {
-            if category.title == creationEvent.category {
-                var newTrackers = category.trackers
-                newTrackers.append(Tracker(id: UUID(), name: creationEvent.name, color: creationEvent.color!, emoji: creationEvent.emoji, shedule: shedule))
-                newCategories.append(TrackerCategory(title: creationEvent.category, trackers: newTrackers))
-            } else {
-                newCategories.append(category)
-            }
-        }
-        if !newCategories.contains(where: { $0.title == creationEvent.category }) {
-            newCategories.append(TrackerCategory(title: creationEvent.category, trackers: [Tracker(id: UUID(), name: creationEvent.name, color: creationEvent.color!, emoji: creationEvent.emoji, shedule: shedule)]))
-        }
-        delegateTrackers?.categories = newCategories
+        trackerCategoryStore.addTracker(
+            title: creationEvent.category,
+            tracker: Tracker(
+                id: UUID(),
+                name: creationEvent.name,
+                color: creationEvent.color!,
+                emoji: creationEvent.emoji,
+                shedule: shedule)
+        )
     }
     
     func setDataSource() {
@@ -258,7 +252,6 @@ class CreationEventViewController: UIViewController, DataSourceDelegate {
     
     private func makeConstraints() {
         setContainerAndTableViewHeight(containerHeight: 781, tableViewHeight: 150)
-//        containerHeightAnchorConstraint = container.heightAnchor.constraint(equalToConstant: 781)
         tableViewTopAnchorConstraint = tableView.topAnchor.constraint(equalTo: nameTrackerTextField.bottomAnchor, constant: 24)
         NSLayoutConstraint.activate([
             scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
@@ -277,7 +270,6 @@ class CreationEventViewController: UIViewController, DataSourceDelegate {
             nameTrackerTextField.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -16),
             limitSimbolLabel.topAnchor.constraint(equalTo: nameTrackerTextField.bottomAnchor, constant: 8),
             limitSimbolLabel.centerXAnchor.constraint(equalTo: container.centerXAnchor),
-//            tableView.heightAnchor.constraint(equalToConstant: 150),
             tableViewTopAnchorConstraint!,
             tableView.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 16),
             tableView.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -16),
@@ -427,7 +419,7 @@ extension CreationEventViewController: UICollectionViewDelegate {
 
 extension CreationEventViewController: UITextFieldDelegate {
     func textFieldDidChangeSelection(_ textField: UITextField) {
-        if textField.text != "" {
+        if !textField.text!.isEmpty {
             clearButton?.isHidden = false
             if textField.text!.count >= 38 && !isLimitSimbol {
                 textField.text?.removeLast()
