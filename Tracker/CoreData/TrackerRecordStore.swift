@@ -12,12 +12,12 @@ final class TrackerRecordStore: NSObject {
     weak var delegate: TrackerRecordStoreDelegate?
     private let context: NSManagedObjectContext
     private var fetchedResultsController: NSFetchedResultsController<TrackerRecordCoreData>!
-
+    
     convenience override init() {
         let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
         try! self.init(context: context)
     }
-
+    
     init(context: NSManagedObjectContext) throws {
         self.context = context
         super.init()
@@ -34,7 +34,7 @@ final class TrackerRecordStore: NSObject {
         self.fetchedResultsController = controller
         try controller.performFetch()
     }
-
+    
     func addRecord(id: UUID, date: Date) {
         let request = NSFetchRequest<TrackerCoreData>(entityName: "TrackerCoreData")
         request.returnsObjectsAsFaults = false
@@ -82,7 +82,7 @@ final class TrackerRecordStore: NSObject {
             print(error)
         }
     }
-
+    
     func getCompletedTrackers() -> [TrackerRecord] {
         var trackerRecords: [TrackerRecord] = []
         let request = NSFetchRequest<TrackerRecordCoreData>(entityName: "TrackerRecordCoreData")

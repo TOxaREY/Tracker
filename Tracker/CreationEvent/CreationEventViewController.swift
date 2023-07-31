@@ -23,6 +23,7 @@ class CreationEventViewController: UIViewController, DataSourceDelegate {
         tableView.translatesAutoresizingMaskIntoConstraints = false
         return tableView
     }()
+    
     private let trackerCategoryStore = TrackerCategoryStore()
     private var isLimitSimbol = false
     private var containerHeightAnchorConstraint: NSLayoutConstraint?
@@ -31,12 +32,14 @@ class CreationEventViewController: UIViewController, DataSourceDelegate {
         container.translatesAutoresizingMaskIntoConstraints = false
         return container
     }()
+    
     private lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.backgroundColor = .ypWhite
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         return scrollView
     }()
+    
     private lazy var nameTrackerTextField: UITextField = {
         let nameTrackerTextField = UITextField()
         nameTrackerTextField.delegate = self
@@ -63,6 +66,7 @@ class CreationEventViewController: UIViewController, DataSourceDelegate {
         self.clearButton = btnClear
         return nameTrackerTextField
     }()
+    
     private lazy var limitSimbolLabel: UILabel = {
         let limitSimbolLabel = UILabel()
         limitSimbolLabel.text = "Ограничение 38 символов"
@@ -73,6 +77,7 @@ class CreationEventViewController: UIViewController, DataSourceDelegate {
         limitSimbolLabel.translatesAutoresizingMaskIntoConstraints = false
         return limitSimbolLabel
     }()
+    
     private var clearButton: UIButton?
     private var tableViewTopAnchorConstraint: NSLayoutConstraint?
     private lazy var emojiLabel: UILabel = {
@@ -84,6 +89,7 @@ class CreationEventViewController: UIViewController, DataSourceDelegate {
         emojiLabel.translatesAutoresizingMaskIntoConstraints = false
         return emojiLabel
     }()
+    
     private lazy var emojiesCollectionView: UICollectionView = {
         let emojiesCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
         emojiesCollectionView.tag = 1
@@ -95,6 +101,7 @@ class CreationEventViewController: UIViewController, DataSourceDelegate {
         emojiesCollectionView.translatesAutoresizingMaskIntoConstraints = false
         return emojiesCollectionView
     }()
+    
     private let emojies = emojiesArray
     private lazy var colorLabel: UILabel = {
         let colorLabel = UILabel()
@@ -105,6 +112,7 @@ class CreationEventViewController: UIViewController, DataSourceDelegate {
         colorLabel.translatesAutoresizingMaskIntoConstraints = false
         return colorLabel
     }()
+    
     private lazy var colorsCollectionView: UICollectionView = {
         let colorsCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
         colorsCollectionView.tag = 2
@@ -116,13 +124,14 @@ class CreationEventViewController: UIViewController, DataSourceDelegate {
         colorsCollectionView.translatesAutoresizingMaskIntoConstraints = false
         return colorsCollectionView
     }()
+    
     private let colors = colorsArray
     private let params = GeometricParams(cellCount: 6,
-                                                leftInset: 19,
-                                                rightInset: 19,
-                                                topInset: 24,
-                                                bottomInset: 24,
-                                                cellSpacing: 5)
+                                         leftInset: 19,
+                                         rightInset: 19,
+                                         topInset: 24,
+                                         bottomInset: 24,
+                                         cellSpacing: 5)
     private let cancelButton: UIButton = {
         let cancelButton = UIButton()
         cancelButton.setTitle("Отменить", for: .normal)
@@ -142,6 +151,7 @@ class CreationEventViewController: UIViewController, DataSourceDelegate {
         cancelButton.translatesAutoresizingMaskIntoConstraints = false
         return cancelButton
     }()
+    
     private let createButton: UIButton = {
         let createButton = UIButton()
         createButton.setTitle("Создать", for: .normal)
@@ -160,12 +170,11 @@ class CreationEventViewController: UIViewController, DataSourceDelegate {
         createButton.isEnabled = false
         return createButton
     }()
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         self.view.backgroundColor = .ypWhite
-        addCategory()
         addSubviews()
         makeConstraints()
         setDataSource()
@@ -184,7 +193,7 @@ class CreationEventViewController: UIViewController, DataSourceDelegate {
     }
     
     func checkAllFillField(isHabit: Bool) {
-        if creationEvent.name != "" && creationEvent.category != "" && !isHabit && creationEvent.emoji != "" && creationEvent.color != nil && !isLimitSimbol {
+        if creationEvent.name != "" && creationEvent.categoryName != "" && !isHabit && creationEvent.emoji != "" && creationEvent.color != nil && !isLimitSimbol {
             createButton.backgroundColor = .ypBlack
             createButton.isEnabled = true
         } else {
@@ -195,7 +204,7 @@ class CreationEventViewController: UIViewController, DataSourceDelegate {
     
     func addTracker(shedule: [WeekDay]?) {
         trackerCategoryStore.addTracker(
-            title: creationEvent.category,
+            title: creationEvent.categoryName,
             tracker: Tracker(
                 id: UUID(),
                 name: creationEvent.name,
@@ -207,7 +216,7 @@ class CreationEventViewController: UIViewController, DataSourceDelegate {
     
     func setDataSource() {
         let items: [(title: String, subtitle: String)] = [
-            ("Категория", creationEvent.category),
+            ("Категория", creationEvent.categoryName),
             ("Расписание", creationEvent.sheduleString())
         ]
         dataSource = TableViewStaticDataSource(cells: items.map { CreationTableViewCell(title: $0.title, subtitle: $0.subtitle) })
@@ -294,13 +303,6 @@ class CreationEventViewController: UIViewController, DataSourceDelegate {
             createButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             createButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20)
         ])
-    }
-    
-    private func addCategory() {
-        guard let category = delegateTrackers?.categories else { return }
-        for cat in category {
-            creationEvent.categoryArray.append((title: cat.title, isChecked: false))
-        }
     }
     
     @objc private func didCancelButton() {

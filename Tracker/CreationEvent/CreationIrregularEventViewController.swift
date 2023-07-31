@@ -8,7 +8,7 @@
 import UIKit
 
 final class CreationIrregularEventViewController: CreationEventViewController {
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -37,7 +37,7 @@ final class CreationIrregularEventViewController: CreationEventViewController {
     
     override func setDataSource() {
         let items: [(title: String, subtitle: String)] = [
-            ("Категория", creationEvent.category)
+            ("Категория", creationEvent.categoryName)
         ]
         dataSource = TableViewStaticDataSource(cells: items.map { CreationTableViewCell(title: $0.title, subtitle: $0.subtitle) })
         tableView.dataSource = dataSource

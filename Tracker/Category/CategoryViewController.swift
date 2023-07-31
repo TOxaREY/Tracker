@@ -9,7 +9,10 @@ import UIKit
 
 final class CategoryViewController: UIViewController {
     weak var delegateDataSource: DataSourceDelegate?
+    private let trackerCategoryStore = TrackerCategoryStore()
     private let maxHeightTableView = Int(UIScreen.main.bounds.height - 286)
+    private var viewModel: CategoryViewModel!
+    private var dataSource: TableViewStaticDataSource!
     private lazy var combinedHabitsEventsImageView: UIImageView = {
         let combinedHabitsEventsImage = UIImage(named: "stars")
         let combinedHabitsEventsImageView = UIImageView(image: combinedHabitsEventsImage)
@@ -17,6 +20,7 @@ final class CategoryViewController: UIViewController {
         combinedHabitsEventsImageView.translatesAutoresizingMaskIntoConstraints = false
         return combinedHabitsEventsImageView
     }()
+    
     private lazy var combinedHabitsEventsLabel: UILabel = {
         let combinedHabitsEventsLabel = UILabel()
         combinedHabitsEventsLabel.numberOfLines = 0
@@ -27,7 +31,7 @@ final class CategoryViewController: UIViewController {
         combinedHabitsEventsLabel.translatesAutoresizingMaskIntoConstraints = false
         return combinedHabitsEventsLabel
     }()
-    private var dataSource: TableViewStaticDataSource!
+    
     private lazy var addCategoryButton: UIButton = {
         let addCategoryButton = UIButton()
         addCategoryButton.setTitle("Добавить категорию", for: .normal)
@@ -45,6 +49,7 @@ final class CategoryViewController: UIViewController {
         addCategoryButton.translatesAutoresizingMaskIntoConstraints = false
         return addCategoryButton
     }()
+    
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
         tableView.delegate = self
@@ -58,9 +63,10 @@ final class CategoryViewController: UIViewController {
         tableView.translatesAutoresizingMaskIntoConstraints = false
         return tableView
     }()
+    
     private var heightTableViewConstraint: NSLayoutConstraint?
     private var bottomAnchorTableViewConstraint: NSLayoutConstraint?
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -68,7 +74,12 @@ final class CategoryViewController: UIViewController {
         self.title = "Категория"
         addSubviews()
         makeConstraints()
-        setDataSource()
+        viewModel = CategoryViewModel(delegateDataSource: delegateDataSource)
+        viewModel.$categories.bind { [weak self] _ in
+            guard let self = self else { return }
+            self.setTableView()
+        }
+        setTableView()
     }
     
     private func addSubviews() {
@@ -96,45 +107,22 @@ final class CategoryViewController: UIViewController {
         ])
     }
     
-   @objc private func didAddCategoryButton() {
+    @objc private func didAddCategoryButton() {
         let newCategoryVC = NewCategoryViewController()
-        newCategoryVC.delegateDataSource = self
         let navVC = UINavigationController(rootViewController: newCategoryVC)
         navVC.modalPresentationStyle = .automatic
         present(navVC, animated: true)
     }
-}
-
-extension CategoryViewController: UITableViewDelegate {
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        creationEvent.checkedCategory(index: indexPath.row)
-        creationEvent.category = creationEvent.categoryArray[indexPath.row].title
-        delegateDataSource?.setDataSource()
-        self.dismiss(animated: true)
-    }
-}
-
-extension CategoryViewController: DataSourceDelegate {
-    var creationEvent: CreationEvent {
-        get {
-            return delegateDataSource?.creationEvent ?? CreationEvent()
-        }
-        set {
-            delegateDataSource?.creationEvent = newValue
-        }
-    }
     
-    func setDataSource() {
-        let items = creationEvent.categoryArray
-        if !items.isEmpty {
+    private func setTableView() {
+        if viewModel.categoriesIsNotEmpty() {
             combinedHabitsEventsImageView.isHidden = true
             combinedHabitsEventsLabel.isHidden = true
         }
-        dataSource = TableViewStaticDataSource(cells: items.map { CategoryTableViewCell(title: $0.title, isChecked: $0.isChecked) })
-        if items.count * 75 <= maxHeightTableView {
+        if viewModel.categoriesCount() * 75 <= maxHeightTableView {
             heightTableViewConstraint?.isActive = false
             bottomAnchorTableViewConstraint?.isActive = false
-            heightTableViewConstraint = tableView.heightAnchor.constraint(equalToConstant: CGFloat(items.count * 75))
+            heightTableViewConstraint = tableView.heightAnchor.constraint(equalToConstant: CGFloat(viewModel.categoriesCount() * 75))
             heightTableViewConstraint?.isActive = true
         } else {
             heightTableViewConstraint?.isActive = false
@@ -142,8 +130,17 @@ extension CategoryViewController: DataSourceDelegate {
             bottomAnchorTableViewConstraint?.isActive = true
         }
         
+        dataSource = viewModel.setDataSource()
+        
         tableView.dataSource = dataSource
         tableView.reloadData()
+    }
+}
+
+extension CategoryViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        viewModel.didSelectRowTableView(index: indexPath.row)
+        self.dismiss(animated: true)
     }
 }
 

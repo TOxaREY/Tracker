@@ -13,18 +13,18 @@ final class TabBarController: UITabBarController {
         
         let trackersViewController = UINavigationController(rootViewController: TrackersViewController())
         let statisticViewController = UINavigationController(rootViewController: StatisticViewController())
-
+        
         trackersViewController.tabBarItem = UITabBarItem(
             title: "Трекеры",
             image: UIImage(named: "tab_trackers_active"),
             selectedImage: nil
-            )
+        )
         
         statisticViewController.tabBarItem = UITabBarItem(
             title: "Статистика",
             image: UIImage(named: "tab_statistic_inactive"),
             selectedImage: nil
-            )
+        )
         let fontAttributes = [NSAttributedString.Key.font: UIFont.ypMedium_10]
         UITabBarItem.appearance().setTitleTextAttributes(fontAttributes, for: .normal)
         UITabBarItem.appearance().setTitleTextAttributes([.foregroundColor: UIColor.ypBlue], for: .selected)

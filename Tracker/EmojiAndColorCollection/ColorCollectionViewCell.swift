@@ -34,7 +34,7 @@ final class ColorCollectionViewCell: UICollectionViewCell {
         
         view.addSubview(colorView)
         contentView.addSubview(view)
-
+        
         NSLayoutConstraint.activate([
             view.topAnchor.constraint(equalTo: contentView.topAnchor),
             view.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),

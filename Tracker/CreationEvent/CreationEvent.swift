@@ -9,8 +9,7 @@ import UIKit
 
 final class CreationEvent {
     var name = ""
-    var categoryArray: [(title: String, isChecked: Bool)] = []
-    var category = ""
+    var categoryName = ""
     var shedule: [WeekDay] = []
     var color: UIColor? = nil
     var emoji = ""
@@ -29,12 +28,5 @@ final class CreationEvent {
         }
         
         return namesDaysWeek
-    }
-    
-    func checkedCategory(index: Int) {
-        for i in 0...categoryArray.count - 1 {
-            categoryArray[i].isChecked = false
-        }
-        categoryArray[index].isChecked = true
     }
 }
