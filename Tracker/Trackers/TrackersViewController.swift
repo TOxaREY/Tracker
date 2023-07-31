@@ -447,14 +447,30 @@ extension TrackersViewController: UICollectionViewDataSource {
         }
         if completedId.contains(id) {
             let completeTrack = completedTrackers.filter({ $0.id == id })
-            cell?.configureTrackersCollectionViewCellDaysLabel(with: completeTrack.count.days())
+            cell?.configureTrackersCollectionViewCellDaysLabel(
+                with: String.localizedStringWithFormat(
+                    NSLocalizedString(
+                        "numberOfDays",
+                        comment: "Number of completed days"
+                    ),
+                    completeTrack.count
+                )
+            )
             if completeTrack.filter({ formattedDate(date: $0.date) == formattedDate(date: currentDate) }).count > 0 {
                 cell?.configureTrackersCollectionViewCellPlusButtonImage(isCompletedImage: true, color: color)
             } else {
                 cell?.configureTrackersCollectionViewCellPlusButtonImage(isCompletedImage: false, color: color)
             }
         } else {
-            cell?.configureTrackersCollectionViewCellDaysLabel(with: 0.days())
+            cell?.configureTrackersCollectionViewCellDaysLabel(
+                with: String.localizedStringWithFormat(
+                    NSLocalizedString(
+                        "numberOfDays",
+                        comment: "Number of completed days"
+                    ),
+                    0
+                )
+            )
             cell?.configureTrackersCollectionViewCellPlusButtonImage(isCompletedImage: false, color: color)
         }
         return cell!
