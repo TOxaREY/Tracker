@@ -26,6 +26,7 @@ final class CreationTrackerViewController: UIViewController {
         habitButton.translatesAutoresizingMaskIntoConstraints = false
         return habitButton
     }()
+    
     private lazy var irregularEventButton: UIButton = {
         let irregularEventButton = UIButton()
         irregularEventButton.setTitle("Нерегулярное событие", for: .normal)
@@ -43,7 +44,7 @@ final class CreationTrackerViewController: UIViewController {
         irregularEventButton.translatesAutoresizingMaskIntoConstraints = false
         return irregularEventButton
     }()
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -53,7 +54,7 @@ final class CreationTrackerViewController: UIViewController {
         addSubviews()
         makeConstraints()
     }
-
+    
     private func addSubviews() {
         view.addSubview(habitButton)
         view.addSubview(irregularEventButton)

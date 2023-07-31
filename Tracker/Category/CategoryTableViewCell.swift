@@ -20,6 +20,7 @@ final class CategoryTableViewCell: UITableViewCell {
             label.translatesAutoresizingMaskIntoConstraints = false
             return label
         }()
+        
         contentView.addSubview(label)
         
         let imageView: UIImageView = {
@@ -32,6 +33,7 @@ final class CategoryTableViewCell: UITableViewCell {
             imageView.translatesAutoresizingMaskIntoConstraints = false
             return imageView
         }()
+        
         contentView.addSubview(imageView)
         
         self.backgroundColor = .ypBackground

@@ -42,7 +42,7 @@ final class CreationTableViewCell: UITableViewCell {
             image.translatesAutoresizingMaskIntoConstraints = false
             return image
         }()
-
+        
         contentView.addSubview(image)
         
         self.backgroundColor = .ypBackground

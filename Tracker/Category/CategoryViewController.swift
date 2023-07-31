@@ -20,6 +20,7 @@ final class CategoryViewController: UIViewController {
         combinedHabitsEventsImageView.translatesAutoresizingMaskIntoConstraints = false
         return combinedHabitsEventsImageView
     }()
+    
     private lazy var combinedHabitsEventsLabel: UILabel = {
         let combinedHabitsEventsLabel = UILabel()
         combinedHabitsEventsLabel.numberOfLines = 0
@@ -30,6 +31,7 @@ final class CategoryViewController: UIViewController {
         combinedHabitsEventsLabel.translatesAutoresizingMaskIntoConstraints = false
         return combinedHabitsEventsLabel
     }()
+    
     private lazy var addCategoryButton: UIButton = {
         let addCategoryButton = UIButton()
         addCategoryButton.setTitle("Добавить категорию", for: .normal)
@@ -47,6 +49,7 @@ final class CategoryViewController: UIViewController {
         addCategoryButton.translatesAutoresizingMaskIntoConstraints = false
         return addCategoryButton
     }()
+    
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
         tableView.delegate = self
@@ -60,9 +63,10 @@ final class CategoryViewController: UIViewController {
         tableView.translatesAutoresizingMaskIntoConstraints = false
         return tableView
     }()
+    
     private var heightTableViewConstraint: NSLayoutConstraint?
     private var bottomAnchorTableViewConstraint: NSLayoutConstraint?
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -70,12 +74,12 @@ final class CategoryViewController: UIViewController {
         self.title = "Категория"
         addSubviews()
         makeConstraints()
-        viewModel = CategoryViewModel()
+        viewModel = CategoryViewModel(delegateDataSource: delegateDataSource)
         viewModel.$categories.bind { [weak self] _ in
             guard let self = self else { return }
-            self.setDataSource()
+            self.setTableView()
         }
-        setDataSource()
+        setTableView()
     }
     
     private func addSubviews() {
@@ -103,54 +107,40 @@ final class CategoryViewController: UIViewController {
         ])
     }
     
-   @objc private func didAddCategoryButton() {
+    @objc private func didAddCategoryButton() {
         let newCategoryVC = NewCategoryViewController()
-        newCategoryVC.delegateDataSource = self
         let navVC = UINavigationController(rootViewController: newCategoryVC)
         navVC.modalPresentationStyle = .automatic
         present(navVC, animated: true)
     }
     
-}
-
-extension CategoryViewController: UITableViewDelegate {
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        delegateDataSource?.creationEvent.categoryName = viewModel.setTitleCategory(index: indexPath.row)
-        delegateDataSource?.setDataSource()
-        self.dismiss(animated: true)
-    }
-}
-
-extension CategoryViewController: DataSourceDelegate {
-    var creationEvent: CreationEvent {
-        get {
-            return delegateDataSource?.creationEvent ?? CreationEvent()
-        }
-        set {
-            delegateDataSource?.creationEvent = newValue
-        }
-    }
-    
-    func setDataSource() {
-        let items = viewModel.categories
-        if !items.isEmpty {
+    private func setTableView() {
+        if viewModel.categoriesIsNotEmpty() {
             combinedHabitsEventsImageView.isHidden = true
             combinedHabitsEventsLabel.isHidden = true
         }
-        if items.count * 75 <= maxHeightTableView {
+        if viewModel.categoriesCount() * 75 <= maxHeightTableView {
             heightTableViewConstraint?.isActive = false
             bottomAnchorTableViewConstraint?.isActive = false
-            heightTableViewConstraint = tableView.heightAnchor.constraint(equalToConstant: CGFloat(items.count * 75))
+            heightTableViewConstraint = tableView.heightAnchor.constraint(equalToConstant: CGFloat(viewModel.categoriesCount() * 75))
             heightTableViewConstraint?.isActive = true
         } else {
             heightTableViewConstraint?.isActive = false
             bottomAnchorTableViewConstraint = tableView.bottomAnchor.constraint(equalTo: self.addCategoryButton.topAnchor, constant: -38)
             bottomAnchorTableViewConstraint?.isActive = true
         }
-        dataSource = TableViewStaticDataSource(cells: items.map { CategoryTableViewCell(title: $0.title, isChecked: $0.isChecked) })
+        
+        dataSource = viewModel.setDataSource()
         
         tableView.dataSource = dataSource
         tableView.reloadData()
+    }
+}
+
+extension CategoryViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        viewModel.didSelectRowTableView(index: indexPath.row)
+        self.dismiss(animated: true)
     }
 }
 

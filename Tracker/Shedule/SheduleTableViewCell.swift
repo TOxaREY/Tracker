@@ -17,7 +17,7 @@ final class SheduleTableViewCell: UITableViewCell {
         self.index = index
         self.creationHabit = creationHabit
         selectionStyle = .none
-
+        
         let label: UILabel = {
             let label = UILabel()
             label.font = .ypRegular_17
@@ -26,7 +26,7 @@ final class SheduleTableViewCell: UITableViewCell {
             label.translatesAutoresizingMaskIntoConstraints = false
             return label
         }()
-
+        
         contentView.addSubview(label)
         
         switchDay.onTintColor = .ypBlue
@@ -38,7 +38,7 @@ final class SheduleTableViewCell: UITableViewCell {
             switchDay.setOn(false, animated: false)
         }
         contentView.addSubview(switchDay)
-
+        
         self.backgroundColor = .ypBackground
         
         NSLayoutConstraint.activate([

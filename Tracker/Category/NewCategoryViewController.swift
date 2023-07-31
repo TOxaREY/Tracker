@@ -8,7 +8,6 @@
 import UIKit
 
 final class NewCategoryViewController: UIViewController {
-    weak var delegateDataSource: DataSourceDelegate?
     private let trackerCategoryStore = TrackerCategoryStore()
     private lazy var readyButton: UIButton = {
         let readyButton = UIButton()
@@ -28,6 +27,7 @@ final class NewCategoryViewController: UIViewController {
         readyButton.translatesAutoresizingMaskIntoConstraints = false
         return readyButton
     }()
+    
     private lazy var nameCategoryTextField: UITextField = {
         let nameCategoryTextField = UITextField()
         nameCategoryTextField.delegate = self
@@ -43,7 +43,7 @@ final class NewCategoryViewController: UIViewController {
         nameCategoryTextField.translatesAutoresizingMaskIntoConstraints = false
         return nameCategoryTextField
     }()
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -59,7 +59,7 @@ final class NewCategoryViewController: UIViewController {
         }
         super.touchesBegan(touches, with: event)
     }
-
+    
     private func addSubviews() {
         view.addSubview(nameCategoryTextField)
         view.addSubview(readyButton)
@@ -81,7 +81,6 @@ final class NewCategoryViewController: UIViewController {
     @objc private func didReadyButton() {
         guard let nameCategory = nameCategoryTextField.text else { return }
         trackerCategoryStore.addCategory(title: nameCategory)
-        delegateDataSource?.creationEvent.categoryName = nameCategory
         self.dismiss(animated: true)
     }
 }

@@ -7,7 +7,9 @@
 
 import UIKit
 
-final class OnboardingViewController: UIPageViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate {
+final class OnboardingViewController: UIPageViewController,
+                                      UIPageViewControllerDataSource,
+                                      UIPageViewControllerDelegate {
     lazy var pages: [UIViewController] = {
         let one = PageViewController(
             backgroundImage: UIImage(named: "start_background") ?? UIImage(),
@@ -30,8 +32,12 @@ final class OnboardingViewController: UIPageViewController, UIPageViewController
         pageControl.translatesAutoresizingMaskIntoConstraints = false
         return pageControl
     }()
-
-    override init(transitionStyle style: UIPageViewController.TransitionStyle, navigationOrientation: UIPageViewController.NavigationOrientation, options: [UIPageViewController.OptionsKey : Any]? = nil) {
+    
+    override init(
+        transitionStyle style: UIPageViewController.TransitionStyle,
+        navigationOrientation: UIPageViewController.NavigationOrientation,
+        options: [UIPageViewController.OptionsKey : Any]? = nil
+    ) {
         super.init(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
     }
     
@@ -41,7 +47,7 @@ final class OnboardingViewController: UIPageViewController, UIPageViewController
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         dataSource = self
         delegate = self
         

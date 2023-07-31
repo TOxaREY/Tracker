@@ -27,6 +27,7 @@ final class SheduleViewController: UIViewController {
         readyButton.translatesAutoresizingMaskIntoConstraints = false
         return readyButton
     }()
+    
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
         var titles: [String] = []
@@ -45,8 +46,9 @@ final class SheduleViewController: UIViewController {
         tableView.translatesAutoresizingMaskIntoConstraints = false
         return tableView
     }()
+    
     private var dataSource: TableViewStaticDataSource!
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         

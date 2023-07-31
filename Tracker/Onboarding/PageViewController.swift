@@ -18,6 +18,7 @@ final class PageViewController: UIViewController {
         backgroundImageView.translatesAutoresizingMaskIntoConstraints = false
         return backgroundImageView
     }()
+    
     lazy var titleLabel: UILabel = {
         let titleLabel = UILabel()
         titleLabel.text = titlePage
@@ -28,6 +29,7 @@ final class PageViewController: UIViewController {
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         return titleLabel
     }()
+    
     lazy var startButton: UIButton = {
         let startButton = UIButton()
         startButton.setTitle("Вот это технологии!", for: .normal)
@@ -58,7 +60,7 @@ final class PageViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         addSubviews()
         makeConstraints()
     }

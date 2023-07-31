@@ -8,7 +8,7 @@
 import UIKit
 
 final class CreationIrregularEventViewController: CreationEventViewController {
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         

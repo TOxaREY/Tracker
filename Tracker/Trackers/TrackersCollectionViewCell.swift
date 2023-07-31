@@ -16,12 +16,14 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         cardView.translatesAutoresizingMaskIntoConstraints = false
         return cardView
     }()
+    
     private lazy var emojiLabel: UILabel = {
         let emojiLabel = UILabel()
         emojiLabel.font = .ypMedium_16
         emojiLabel.translatesAutoresizingMaskIntoConstraints = false
         return emojiLabel
     }()
+    
     private lazy var nameLabel: UILabel = {
         let nameLabel = UILabel()
         nameLabel.font = .ypMedium_12
@@ -33,6 +35,7 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         nameLabel.translatesAutoresizingMaskIntoConstraints = false
         return nameLabel
     }()
+    
     private lazy var daysLabel: UILabel = {
         let daysLabel = UILabel()
         daysLabel.font = .ypMedium_12
@@ -41,6 +44,7 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         daysLabel.translatesAutoresizingMaskIntoConstraints = false
         return daysLabel
     }()
+    
     private lazy var viewEmoji: UIView = {
         let viewEmoji = UIView()
         viewEmoji.layer.cornerRadius = 12
@@ -49,6 +53,7 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         viewEmoji.translatesAutoresizingMaskIntoConstraints = false
         return viewEmoji
     }()
+    
     private lazy var plusButton: UIButton = {
         let plusButton = UIButton()
         plusButton.layer.cornerRadius = 17
@@ -61,6 +66,7 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         )
         return plusButton
     }()
+    
     private var indexPathSection = Int()
     private var indexPathRow = Int()
     
@@ -73,7 +79,7 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         contentView.addSubview(cardView)
         contentView.addSubview(daysLabel)
         contentView.addSubview(plusButton)
-
+        
         NSLayoutConstraint.activate([
             cardView.topAnchor.constraint(equalTo: contentView.topAnchor),
             cardView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),

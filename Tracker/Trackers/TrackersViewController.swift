@@ -25,6 +25,7 @@ final class TrackersViewController: UIViewController, TrackersViewControllerDele
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         return titleLabel
     }()
+    
     private lazy var dateLabel: UILabel = {
         let dateLabel = UILabel()
         dateLabel.backgroundColor = .ypBackgroundTrackersField
@@ -36,6 +37,7 @@ final class TrackersViewController: UIViewController, TrackersViewControllerDele
         dateLabel.translatesAutoresizingMaskIntoConstraints = false
         return dateLabel
     }()
+    
     private lazy var datePicker: UIDatePicker = {
         let datePicker = UIDatePicker()
         datePicker.preferredDatePickerStyle = .compact
@@ -54,6 +56,7 @@ final class TrackersViewController: UIViewController, TrackersViewControllerDele
         datePicker.translatesAutoresizingMaskIntoConstraints = false
         return datePicker
     }()
+    
     private lazy var stackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .horizontal
@@ -62,6 +65,7 @@ final class TrackersViewController: UIViewController, TrackersViewControllerDele
         stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
     }()
+    
     private lazy var searchTextField: UISearchTextField = {
         let searchTextField = UISearchTextField()
         searchTextField.attributedPlaceholder = NSAttributedString(
@@ -80,6 +84,7 @@ final class TrackersViewController: UIViewController, TrackersViewControllerDele
         searchTextField.translatesAutoresizingMaskIntoConstraints = false
         return searchTextField
     }()
+    
     private lazy var cancelButton: UIButton = {
         let cancelButton = UIButton()
         cancelButton.backgroundColor = .clear
@@ -97,6 +102,7 @@ final class TrackersViewController: UIViewController, TrackersViewControllerDele
         cancelButton.translatesAutoresizingMaskIntoConstraints = false
         return cancelButton
     }()
+    
     private lazy var messageImageView: UIImageView = {
         let messageImageView = UIImageView()
         messageImageView.contentMode = .scaleAspectFit
@@ -104,6 +110,7 @@ final class TrackersViewController: UIViewController, TrackersViewControllerDele
         messageImageView.translatesAutoresizingMaskIntoConstraints = false
         return messageImageView
     }()
+    
     private lazy var messageLabel: UILabel = {
         let messageLabel = UILabel()
         messageLabel.text = "Что будем отслеживать?"
@@ -114,6 +121,7 @@ final class TrackersViewController: UIViewController, TrackersViewControllerDele
         messageLabel.translatesAutoresizingMaskIntoConstraints = false
         return messageLabel
     }()
+    
     private lazy var trackersCollectionView: UICollectionView = {
         let trackersCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
         trackersCollectionView.dataSource = self
@@ -125,6 +133,7 @@ final class TrackersViewController: UIViewController, TrackersViewControllerDele
         trackersCollectionView.translatesAutoresizingMaskIntoConstraints = false
         return trackersCollectionView
     }()
+    
     private let params = GeometricParams(
         cellCount: 2,
         leftInset: 16,
@@ -133,7 +142,7 @@ final class TrackersViewController: UIViewController, TrackersViewControllerDele
         bottomInset: 0,
         cellSpacing: 9
     )
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -398,7 +407,7 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
                                                   withHorizontalFittingPriority: .required,
                                                   verticalFittingPriority: .fittingSizeLevel)
     }
-
+    
     private func setCellSize(_ collectionView: UICollectionView) -> CGSize {
         let availableWidth = collectionView.frame.width - params.paddingWight
         let cellWidth = availableWidth / CGFloat(params.cellCount)
