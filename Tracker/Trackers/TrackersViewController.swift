@@ -18,7 +18,10 @@ final class TrackersViewController: UIViewController, TrackersViewControllerDele
     private let trackerRecordStore = TrackerRecordStore()
     private lazy var titleLabel: UILabel = {
         let titleLabel = UILabel()
-        titleLabel.text = "Трекеры"
+        titleLabel.text = NSLocalizedString(
+            "trackers.title",
+            comment: "Title trackers"
+        )
         titleLabel.textColor = .ypBlack
         titleLabel.textAlignment = .left
         titleLabel.font = .ypBold_34
@@ -42,7 +45,7 @@ final class TrackersViewController: UIViewController, TrackersViewControllerDele
         let datePicker = UIDatePicker()
         datePicker.preferredDatePickerStyle = .compact
         datePicker.datePickerMode = .date
-        datePicker.locale = Locale(identifier: "ru_RU")
+        datePicker.locale = .current
         datePicker.calendar.firstWeekday = 2
         datePicker.layer.cornerRadius = 8
         datePicker.clipsToBounds = true
@@ -69,7 +72,10 @@ final class TrackersViewController: UIViewController, TrackersViewControllerDele
     private lazy var searchTextField: UISearchTextField = {
         let searchTextField = UISearchTextField()
         searchTextField.attributedPlaceholder = NSAttributedString(
-            string: "Поиск",
+            string: NSLocalizedString(
+                "search.placeholder",
+                comment: "Placeholder search"
+            ),
             attributes: [NSAttributedString.Key.foregroundColor: UIColor.ypGray]
         )
         searchTextField.backgroundColor = .ypBackgroundTrackersField.withAlphaComponent(0)
@@ -90,7 +96,13 @@ final class TrackersViewController: UIViewController, TrackersViewControllerDele
         cancelButton.backgroundColor = .clear
         cancelButton.titleLabel?.font = .ypRegular_17
         cancelButton.setTitleColor(.ypBlue, for: .normal)
-        cancelButton.setTitle("Отменить", for: .normal)
+        cancelButton.setTitle(
+            NSLocalizedString(
+                "cancel",
+                comment: "Cancel"
+            ),
+            for: .normal
+        )
         cancelButton.layer.cornerRadius = 16
         cancelButton.layer.masksToBounds = true
         cancelButton.addTarget(
@@ -113,7 +125,10 @@ final class TrackersViewController: UIViewController, TrackersViewControllerDele
     
     private lazy var messageLabel: UILabel = {
         let messageLabel = UILabel()
-        messageLabel.text = "Что будем отслеживать?"
+        messageLabel.text = NSLocalizedString(
+            "whatWillWeTrack.message",
+            comment: "Text message label"
+        )
         messageLabel.textColor = .ypBlack
         messageLabel.textAlignment = .center
         messageLabel.font = .ypMedium_12
@@ -313,14 +328,20 @@ final class TrackersViewController: UIViewController, TrackersViewControllerDele
     private func setMessageEmptySearchResult() {
         if visibleCategories.isEmpty {
             messageImageView.image = UIImage(named: "not_found")
-            messageLabel.text = "Ничего не найдено"
+            messageLabel.text = NSLocalizedString(
+                "nothingFound.message",
+                comment: "Text message label"
+            )
         }
     }
     
     private func setMessageWhatTracker() {
         if visibleCategories.isEmpty {
             messageImageView.image = UIImage(named: "stars")
-            messageLabel.text = "Что будем отслеживать?"
+            messageLabel.text = NSLocalizedString(
+                "whatWillWeTrack.message",
+                comment: "Text message label"
+            )
         }
     }
     

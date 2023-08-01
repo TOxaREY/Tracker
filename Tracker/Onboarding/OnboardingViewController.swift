@@ -13,11 +13,17 @@ final class OnboardingViewController: UIPageViewController,
     lazy var pages: [UIViewController] = {
         let one = PageViewController(
             backgroundImage: UIImage(named: "start_background") ?? UIImage(),
-            titlePage: "Отслеживайте только то, что хотите"
+            titlePage: NSLocalizedString(
+                "onboarding.pageOne.title",
+                comment: "Title page one in onboarding"
+            )
         )
         let two = PageViewController(
             backgroundImage: UIImage(named: "start_background_2") ?? UIImage(),
-            titlePage: "Даже если это не литры воды и йога"
+            titlePage: NSLocalizedString(
+                "onboarding.pageTwo.title",
+                comment: "Title page two in onboarding"
+            )
         )
         
         return [one, two]

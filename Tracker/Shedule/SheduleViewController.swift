@@ -12,7 +12,12 @@ final class SheduleViewController: UIViewController {
     private var nameTrackerTextField: UITextField?
     private lazy var readyButton: UIButton = {
         let readyButton = UIButton()
-        readyButton.setTitle("Готово", for: .normal)
+        readyButton.setTitle(
+            NSLocalizedString(
+                "ready",
+                comment: "Title ready button"
+            ),
+            for: .normal)
         readyButton.layer.cornerRadius = 16
         readyButton.clipsToBounds = true
         readyButton.backgroundColor = .ypBlack
@@ -34,7 +39,11 @@ final class SheduleViewController: UIViewController {
         WeekDay.allCases.forEach { day in
             titles.append(day.name)
         }
-        dataSource = TableViewStaticDataSource(cells: titles.enumerated().map { SheduleTableViewCell(title: $1, index: $0, creationHabit: delegateDataSource?.creationEvent ?? CreationEvent()) })
+        dataSource = TableViewStaticDataSource(cells: titles.enumerated().map { SheduleTableViewCell(
+            title: $1,
+            index: $0,
+            creationHabit: delegateDataSource?.creationEvent ?? CreationEvent()) }
+        )
         tableView.dataSource = dataSource
         tableView.backgroundColor = .clear
         tableView.rowHeight = 75.0
@@ -53,7 +62,10 @@ final class SheduleViewController: UIViewController {
         super.viewDidLoad()
         
         self.view.backgroundColor = .ypWhite
-        self.title = "Расписание"
+        self.title = NSLocalizedString(
+            "shedule.title",
+            comment: "Title shedule"
+        )
         addSubviews()
         makeConstraints()
     }

@@ -12,7 +12,10 @@ final class CreationHabitViewController: CreationEventViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.title = "Новая привычка"
+        self.title = NSLocalizedString(
+            "newHabit.title",
+            comment: "New habit title"
+        )
     }
 }
 

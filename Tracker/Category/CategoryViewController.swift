@@ -24,7 +24,10 @@ final class CategoryViewController: UIViewController {
     private lazy var combinedHabitsEventsLabel: UILabel = {
         let combinedHabitsEventsLabel = UILabel()
         combinedHabitsEventsLabel.numberOfLines = 0
-        combinedHabitsEventsLabel.text = "Привычки и события можно\nобъединить по смыслу"
+        combinedHabitsEventsLabel.text = NSLocalizedString(
+            "category.message",
+            comment: "Message empty categories"
+        )
         combinedHabitsEventsLabel.textColor = .ypBlack
         combinedHabitsEventsLabel.textAlignment = .center
         combinedHabitsEventsLabel.font = .ypMedium_12
@@ -34,7 +37,13 @@ final class CategoryViewController: UIViewController {
     
     private lazy var addCategoryButton: UIButton = {
         let addCategoryButton = UIButton()
-        addCategoryButton.setTitle("Добавить категорию", for: .normal)
+        addCategoryButton.setTitle(
+            NSLocalizedString(
+                "addCategoryButton.title",
+                comment: "Title add category button"
+            ),
+            for: .normal
+        )
         addCategoryButton.layer.cornerRadius = 16
         addCategoryButton.clipsToBounds = true
         addCategoryButton.backgroundColor = .ypBlack
@@ -71,7 +80,10 @@ final class CategoryViewController: UIViewController {
         super.viewDidLoad()
         
         self.view.backgroundColor = .ypWhite
-        self.title = "Категория"
+        self.title = NSLocalizedString(
+            "category.title",
+            comment: "Title category"
+        )
         addSubviews()
         makeConstraints()
         viewModel = CategoryViewModel(delegateDataSource: delegateDataSource)

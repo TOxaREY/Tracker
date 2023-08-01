@@ -11,7 +11,12 @@ final class NewCategoryViewController: UIViewController {
     private let trackerCategoryStore = TrackerCategoryStore()
     private lazy var readyButton: UIButton = {
         let readyButton = UIButton()
-        readyButton.setTitle("Готово", for: .normal)
+        readyButton.setTitle(
+            NSLocalizedString(
+                "ready",
+                comment: "Title ready button"
+            ),
+            for: .normal)
         readyButton.layer.cornerRadius = 16
         readyButton.clipsToBounds = true
         readyButton.backgroundColor = .ypGray
@@ -31,7 +36,13 @@ final class NewCategoryViewController: UIViewController {
     private lazy var nameCategoryTextField: UITextField = {
         let nameCategoryTextField = UITextField()
         nameCategoryTextField.delegate = self
-        nameCategoryTextField.attributedPlaceholder = NSAttributedString(string: "Введите название категории", attributes: [NSAttributedString.Key.foregroundColor: UIColor.ypGray])
+        nameCategoryTextField.attributedPlaceholder = NSAttributedString(
+            string: NSLocalizedString(
+                "nameCategory.placeholder",
+                comment: "Placeholder name category"
+            ),
+            attributes: [NSAttributedString.Key.foregroundColor: UIColor.ypGray]
+        )
         nameCategoryTextField.backgroundColor = .ypBackground
         nameCategoryTextField.font = .ypRegular_17
         nameCategoryTextField.textColor = .ypBlack
@@ -48,7 +59,10 @@ final class NewCategoryViewController: UIViewController {
         super.viewDidLoad()
         
         self.view.backgroundColor = .ypWhite
-        self.title = "Новая категория"
+        self.title = NSLocalizedString(
+            "newCategory.title",
+            comment: "New category title"
+        )
         addSubviews()
         makeConstraints()
     }

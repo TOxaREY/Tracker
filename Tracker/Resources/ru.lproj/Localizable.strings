@@ -1,0 +1,47 @@
+/* 
+  Localizable.strings
+  Tracker
+
+  Created by Anton Reynikov on 31.07.2023.
+  
+*/
+"trackers.title" = "Трекеры";
+"statistics.title" = "Статистика";
+"onboarding.pageOne.title" = "Отслеживайте только то, что хотите";
+"onboarding.pageTwo.title" = "Даже если это не литры воды и йога";
+"startButton.title" = "Вот это технологии!";
+"search.placeholder" = "Поиск";
+"cancel" = "Отменить";
+"whatWillWeTrack.message" = "Что будем отслеживать?";
+"nothingFound.message" = "Ничего не найдено";
+"habit.title" = "Привычка";
+"irregularEvent.title" = "Нерегулярное событие";
+"creationTracker.title" = "Создание трекера";
+"category.title" = "Категория";
+"category.message" = "Привычки и события можно\nобъединить по смыслу";
+"addCategoryButton.title" = "Добавить категорию";
+"ready" = "Готово";
+"nameCategory.placeholder" = "Введите название категории";
+"newCategory.title" = "Новая категория";
+"newHabit.title" = "Новая привычка";
+"newIrregularEvent.title" = "Новое нерегулярное событие";
+"nameTracker.placeholder" = "Введите название трекера";
+"limitSimbol.message" = "Ограничение 38 символов";
+"color.title" = "Цвет";
+"create" = "Создать";
+"shedule.title" = "Расписание";
+"everyDay" = "Каждый день";
+"monday.full" = "Понедельник";
+"tuesday.full" = "Вторник";
+"wednesday.full" = "Среда";
+"thursday.full" = "Четверг";
+"friday.full" = "Пятница";
+"saturday.full" = "Суббота";
+"sunday.full" = "Воскресенье";
+"monday.short" = "Пн";
+"tuesday.short" = "Вт";
+"wednesday.short" = "Ср";
+"thursday.short" = "Чт";
+"friday.short" = "Пт";
+"saturday.short" = "Сб";
+"sunday.short" = "Вс";

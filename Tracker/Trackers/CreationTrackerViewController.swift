@@ -11,7 +11,13 @@ final class CreationTrackerViewController: UIViewController {
     weak var delegateTrackers: TrackersViewControllerDelegate?
     private lazy var habitButton: UIButton = {
         let habitButton = UIButton()
-        habitButton.setTitle("Привычка", for: .normal)
+        habitButton.setTitle(
+            NSLocalizedString(
+                "habit.title",
+                comment: "Title habit button"
+            ),
+            for: .normal
+        )
         habitButton.layer.cornerRadius = 16
         habitButton.clipsToBounds = true
         habitButton.backgroundColor = .ypBlack
@@ -29,7 +35,13 @@ final class CreationTrackerViewController: UIViewController {
     
     private lazy var irregularEventButton: UIButton = {
         let irregularEventButton = UIButton()
-        irregularEventButton.setTitle("Нерегулярное событие", for: .normal)
+        irregularEventButton.setTitle(
+            NSLocalizedString(
+                "irregularEvent.title",
+                comment: "Title irregular event button"
+            ),
+            for: .normal
+        )
         irregularEventButton.layer.cornerRadius = 16
         irregularEventButton.clipsToBounds = true
         irregularEventButton.backgroundColor = .ypBlack
@@ -49,7 +61,10 @@ final class CreationTrackerViewController: UIViewController {
         super.viewDidLoad()
         
         self.view.backgroundColor = .ypWhite
-        self.title = "Создание трекера"
+        self.title = NSLocalizedString(
+            "creationTracker.title",
+            comment: "Creation tracker title"
+        )
         self.navigationItem.hidesBackButton = true
         addSubviews()
         makeConstraints()

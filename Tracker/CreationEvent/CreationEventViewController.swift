@@ -43,7 +43,13 @@ class CreationEventViewController: UIViewController, DataSourceDelegate {
     private lazy var nameTrackerTextField: UITextField = {
         let nameTrackerTextField = UITextField()
         nameTrackerTextField.delegate = self
-        nameTrackerTextField.attributedPlaceholder = NSAttributedString(string: "Введите название трекера", attributes: [NSAttributedString.Key.foregroundColor: UIColor.ypGray])
+        nameTrackerTextField.attributedPlaceholder = NSAttributedString(
+            string: NSLocalizedString(
+                "nameTracker.placeholder",
+                comment: "Placeholder name tracker"
+            ),
+            attributes: [NSAttributedString.Key.foregroundColor: UIColor.ypGray]
+        )
         nameTrackerTextField.backgroundColor = UIColor(hex: "#e6e8eb4d")
         nameTrackerTextField.font = .ypRegular_17
         nameTrackerTextField.textColor = .ypBlack
@@ -69,7 +75,10 @@ class CreationEventViewController: UIViewController, DataSourceDelegate {
     
     private lazy var limitSimbolLabel: UILabel = {
         let limitSimbolLabel = UILabel()
-        limitSimbolLabel.text = "Ограничение 38 символов"
+        limitSimbolLabel.text = NSLocalizedString(
+            "limitSimbol.message",
+            comment: "Limit simbol message"
+        )
         limitSimbolLabel.textColor = .ypRed
         limitSimbolLabel.textAlignment = .center
         limitSimbolLabel.font = .ypRegular_17
@@ -105,7 +114,10 @@ class CreationEventViewController: UIViewController, DataSourceDelegate {
     private let emojies = emojiesArray
     private lazy var colorLabel: UILabel = {
         let colorLabel = UILabel()
-        colorLabel.text = "Цвет"
+        colorLabel.text = NSLocalizedString(
+            "color.title",
+            comment: "Title color"
+        )
         colorLabel.textColor = .ypBlack
         colorLabel.textAlignment = .left
         colorLabel.font = .ypBold_19
@@ -134,7 +146,13 @@ class CreationEventViewController: UIViewController, DataSourceDelegate {
                                          cellSpacing: 5)
     private let cancelButton: UIButton = {
         let cancelButton = UIButton()
-        cancelButton.setTitle("Отменить", for: .normal)
+        cancelButton.setTitle(
+            NSLocalizedString(
+                "cancel",
+                comment: "Title cancel button"
+            ),
+            for: .normal
+        )
         cancelButton.layer.cornerRadius = 16
         cancelButton.clipsToBounds = true
         cancelButton.backgroundColor = .ypWhite
@@ -154,7 +172,13 @@ class CreationEventViewController: UIViewController, DataSourceDelegate {
     
     private let createButton: UIButton = {
         let createButton = UIButton()
-        createButton.setTitle("Создать", for: .normal)
+        createButton.setTitle(
+            NSLocalizedString(
+                "create",
+                comment: "Title create button"
+            ),
+            for: .normal
+        )
         createButton.layer.cornerRadius = 16
         createButton.clipsToBounds = true
         createButton.backgroundColor = .ypGray
@@ -216,8 +240,20 @@ class CreationEventViewController: UIViewController, DataSourceDelegate {
     
     func setDataSource() {
         let items: [(title: String, subtitle: String)] = [
-            ("Категория", creationEvent.categoryName),
-            ("Расписание", creationEvent.sheduleString())
+            (
+                NSLocalizedString(
+                "category.title",
+                comment: "Title category"
+            ),
+             creationEvent.categoryName
+            ),
+            (
+                NSLocalizedString(
+                    "shedule.title",
+                    comment: "Title shedule"
+                ),
+             creationEvent.sheduleString()
+            )
         ]
         dataSource = TableViewStaticDataSource(cells: items.map { CreationTableViewCell(title: $0.title, subtitle: $0.subtitle) })
         tableView.dataSource = dataSource
