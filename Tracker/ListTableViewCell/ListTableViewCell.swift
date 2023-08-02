@@ -1,5 +1,5 @@
 //
-//  CategoryTableViewCell.swift
+//  ListTableViewCell.swift
 //  Tracker
 //
 //  Created by Anton Reynikov on 19.05.2023.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class CategoryTableViewCell: UITableViewCell {
+final class ListTableViewCell: UITableViewCell {
     convenience init(title: String, isChecked: Bool) {
         self.init()
         selectionStyle = .none

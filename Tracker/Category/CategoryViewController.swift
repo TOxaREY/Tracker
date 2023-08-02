@@ -109,7 +109,7 @@ final class CategoryViewController: UIViewController {
             combinedHabitsEventsImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             combinedHabitsEventsLabel.topAnchor.constraint(equalTo: combinedHabitsEventsImageView.bottomAnchor, constant: 8),
             combinedHabitsEventsLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 38),
+            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 24),
             tableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
             tableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
             addCategoryButton.heightAnchor.constraint(equalToConstant: 60),

@@ -44,7 +44,7 @@ final class CategoryViewModel {
     func setDataSource() -> TableViewStaticDataSource! {
         return TableViewStaticDataSource(
             cells: categories.map {
-                CategoryTableViewCell(
+                ListTableViewCell(
                     title: $0.title,
                     isChecked: $0.isChecked
                 )

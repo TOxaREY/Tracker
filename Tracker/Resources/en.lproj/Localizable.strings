@@ -45,3 +45,8 @@
 "friday.short" = "Fr";
 "saturday.short" = "Sa";
 "sunday.short" = "Su";
+"filters.title" = "Filters";
+"allTrackers" = "All trackers";
+"todayTrackers" = "All trackers";
+"сompleted" = "Completed";
+"notCompleted" = "Not completed";

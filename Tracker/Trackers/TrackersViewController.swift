@@ -7,12 +7,16 @@
 
 import UIKit
 
-final class TrackersViewController: UIViewController, TrackersViewControllerDelegate {
+final class TrackersViewController: UIViewController,
+                                    TrackersViewControllerDelegate,
+                                    FiltersDelegate {
     var categories: [TrackerCategory] = []
     var visibleCategories: [TrackerCategory] = []
     var completedTrackers: [TrackerRecord] = []
     var currentDate: Date = Date()
     var completedId: Set<UUID> = []
+    @Observable
+    var filtersName: FiltersName = FiltersName.AllTrackers
     private var navBar: UINavigationBar?
     private let trackerCategoryStore = TrackerCategoryStore()
     private let trackerRecordStore = TrackerRecordStore()
@@ -149,6 +153,30 @@ final class TrackersViewController: UIViewController, TrackersViewControllerDele
         return trackersCollectionView
     }()
     
+    private lazy var filtersButton: UIButton = {
+        let filtersButton = UIButton()
+        filtersButton.backgroundColor = .ypBlue
+        filtersButton.titleLabel?.font = .ypRegular_17
+        filtersButton.setTitleColor(.ypWhite, for: .normal)
+        filtersButton.setTitle(
+            NSLocalizedString(
+                "filters.title",
+                comment: "Title button filters"
+            ),
+            for: .normal
+        )
+        filtersButton.layer.cornerRadius = 16
+        filtersButton.layer.masksToBounds = true
+        filtersButton.addTarget(
+            self,
+            action: #selector(didFiltersButton),
+            for: .touchUpInside
+        )
+        filtersButton.isHidden = false
+        filtersButton.translatesAutoresizingMaskIntoConstraints = false
+        return filtersButton
+    }()
+    
     private let params = GeometricParams(
         cellCount: 2,
         leftInset: 16,
@@ -173,6 +201,10 @@ final class TrackersViewController: UIViewController, TrackersViewControllerDele
             selector: #selector(self.didTapPlusButton),
             name: NSNotification.Name(rawValue: "tapPlusButton"),
             object: nil)
+        $filtersName.bind { [weak self] _ in
+            guard let self = self else { return }
+            self.setFilteredTracker()
+        }
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -219,6 +251,7 @@ final class TrackersViewController: UIViewController, TrackersViewControllerDele
         view.addSubview(messageImageView)
         view.addSubview(messageLabel)
         view.addSubview(trackersCollectionView)
+        view.addSubview(filtersButton)
     }
     
     private func makeConstraints() {
@@ -246,7 +279,11 @@ final class TrackersViewController: UIViewController, TrackersViewControllerDele
             trackersCollectionView.topAnchor.constraint(equalTo: searchTextField.bottomAnchor, constant: 10),
             trackersCollectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             trackersCollectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
-            trackersCollectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+            trackersCollectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            filtersButton.heightAnchor.constraint(equalToConstant: 50),
+            filtersButton.widthAnchor.constraint(equalToConstant: 114),
+            filtersButton.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
+            filtersButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16)
         ])
     }
     
@@ -307,6 +344,44 @@ final class TrackersViewController: UIViewController, TrackersViewControllerDele
         setMessageWhatTracker()
     }
     
+    private func setVisibleCategoriesCompletedForDate() {
+        setVisibleCategoriesForDate()
+        let completedTrackerToday = completedTrackers.filter({ formattedDate(date: $0.date) == formattedDate(date: currentDate) })
+        var visibleCategories: [TrackerCategory] = []
+        for cat in self.visibleCategories {
+            var trackersArr: [Tracker] = []
+            for tr in cat.trackers {
+                if completedTrackerToday.filter({ $0.id == tr.id }).count > 0 {
+                    trackersArr.append(tr)
+                }
+            }
+            if !trackersArr.isEmpty {
+                visibleCategories.append(TrackerCategory(title: cat.title, trackers: trackersArr))
+            }
+        }
+        self.visibleCategories = visibleCategories
+        setMessageEmptySearchResult()
+    }
+    
+    private func setVisibleCategoriesNotCompletedForDate() {
+        setVisibleCategoriesForDate()
+        let completedTrackerToday = completedTrackers.filter({ formattedDate(date: $0.date) == formattedDate(date: currentDate) })
+        var visibleCategories: [TrackerCategory] = []
+        for cat in self.visibleCategories {
+            var trackersArr: [Tracker] = []
+            for tr in cat.trackers {
+                if completedTrackerToday.filter({ $0.id == tr.id }).count == 0 {
+                    trackersArr.append(tr)
+                }
+            }
+            if !trackersArr.isEmpty {
+                visibleCategories.append(TrackerCategory(title: cat.title, trackers: trackersArr))
+            }
+        }
+        self.visibleCategories = visibleCategories
+        setMessageEmptySearchResult()
+    }
+    
     private func setVisibleCategoriesForName(char: String) {
         let categories = categories
         var visibleCategories: [TrackerCategory] = []
@@ -345,10 +420,30 @@ final class TrackersViewController: UIViewController, TrackersViewControllerDele
         }
     }
     
-    @objc private func didChangedDatePicker() {
+    private func setFilteredTracker() {
+        switch filtersName {
+        case FiltersName.TodayTrackers:
+            datePicker.date = Date()
+            changeDataPicker()
+        case FiltersName.СompletedTrackers:
+            setVisibleCategoriesCompletedForDate()
+            trackersCollectionView.reloadData()
+        case FiltersName.NotCompletedTrackers:
+            setVisibleCategoriesNotCompletedForDate()
+            trackersCollectionView.reloadData()
+        default :
+            changeDataPicker()
+        }
+    }
+    
+    private func changeDataPicker() {
         updateDateLabel(date: datePicker.date)
         currentDate = datePicker.date
         checkDateAndReloadTrackersCollectionView()
+    }
+    
+    @objc private func didChangedDatePicker() {
+        filtersName = FiltersName.AllTrackers
     }
     
     @objc private func didChangedSearchTextField() {
@@ -398,7 +493,16 @@ final class TrackersViewController: UIViewController, TrackersViewControllerDele
             trackersCollectionView.performBatchUpdates({
                 trackersCollectionView.reloadItems(at: [IndexPath(row: indexPathRow, section: indexPathSection)])
             })
+            setFilteredTracker()
         }
+    }
+    
+    @objc private func didFiltersButton() {
+        let filtersVC = FiltersViewController()
+        filtersVC.delegateFilters = self
+        let navVC = UINavigationController(rootViewController: filtersVC)
+        navVC.modalPresentationStyle = .automatic
+        present(navVC, animated: true)
     }
 }
 

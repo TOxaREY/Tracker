@@ -45,3 +45,9 @@
 "friday.short" = "Пт";
 "saturday.short" = "Сб";
 "sunday.short" = "Вс";
+"filters.title" = "Фильтры";
+"allTrackers" = "Все трекеры";
+"todayTrackers" = "Трекеры на сегодня";
+"сompleted" = "Завершенные";
+"notCompleted" = "Не завершенные";
+
