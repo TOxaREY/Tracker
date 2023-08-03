@@ -50,3 +50,9 @@
 "todayTrackers" = "All trackers";
 "сompleted" = "Completed";
 "notCompleted" = "Not completed";
+"pinned.title" = "Pinned";
+"delete" = "Delete";
+"sureWantDeleteTracker.message" = "Are you sure you want to delete the tracker?";
+"edit" = "Edit";
+"unpin" = "Unpin";
+"pin" = "Рin";

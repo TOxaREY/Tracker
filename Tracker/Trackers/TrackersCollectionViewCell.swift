@@ -8,7 +8,7 @@
 import UIKit
 
 final class TrackersCollectionViewCell: UICollectionViewCell {
-    private lazy var cardView: UIView = {
+    lazy var cardView: UIView = {
         let cardView = UIView()
         cardView.layer.cornerRadius = 16
         cardView.clipsToBounds = true

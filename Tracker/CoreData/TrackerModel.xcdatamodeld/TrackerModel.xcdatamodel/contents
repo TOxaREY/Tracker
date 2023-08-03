@@ -8,6 +8,7 @@
     <entity name="TrackerCoreData" representedClassName="TrackerCoreData" syncable="YES" codeGenerationType="class">
         <attribute name="color" optional="YES" attributeType="String"/>
         <attribute name="emoji" optional="YES" attributeType="String"/>
+        <attribute name="fixed" optional="YES" attributeType="Boolean" usesScalarValueType="NO"/>
         <attribute name="idTracker" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="name" optional="YES" attributeType="String"/>
         <attribute name="shedule" optional="YES" attributeType="String"/>

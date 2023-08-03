@@ -234,7 +234,9 @@ class CreationEventViewController: UIViewController, DataSourceDelegate {
                 name: creationEvent.name,
                 color: creationEvent.color!,
                 emoji: creationEvent.emoji,
-                shedule: shedule)
+                shedule: shedule,
+                fixed: false
+            )
         )
     }
     

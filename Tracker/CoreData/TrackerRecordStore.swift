@@ -83,6 +83,31 @@ final class TrackerRecordStore: NSObject {
         }
     }
     
+    func removeRecords(tracker: Tracker) {
+        let request = NSFetchRequest<TrackerRecordCoreData>(entityName: "TrackerRecordCoreData")
+        request.returnsObjectsAsFaults = false
+        request.predicate = NSPredicate(
+            format: "%K.%K == %@",
+            #keyPath(TrackerRecordCoreData.tracker),
+            #keyPath(TrackerCoreData.idTracker),
+            tracker.id as NSUUID
+        )
+        do {
+            let records = try context.fetch(request)
+            records.forEach { record in
+                context.delete(record)
+            }
+        } catch let error {
+            print(error)
+        }
+        
+        do {
+            try context.save()
+        } catch let error {
+            print(error)
+        }
+    }
+    
     func getCompletedTrackers() -> [TrackerRecord] {
         var trackerRecords: [TrackerRecord] = []
         let request = NSFetchRequest<TrackerRecordCoreData>(entityName: "TrackerRecordCoreData")

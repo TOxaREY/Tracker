@@ -50,4 +50,9 @@
 "todayTrackers" = "Трекеры на сегодня";
 "сompleted" = "Завершенные";
 "notCompleted" = "Не завершенные";
-
+"pinned.title" = "Закрепленные";
+"delete" = "Удалить";
+"sureWantDeleteTracker.message" = "Уверены что хотите удалить трекер?";
+"edit" = "Редактировать";
+"unpin" = "Открепить";
+"pin" = "Закрепить";

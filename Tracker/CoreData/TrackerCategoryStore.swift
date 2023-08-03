@@ -146,15 +146,32 @@ final class TrackerCategoryStore: NSObject {
     func getTrackerCategory() -> [TrackerCategory] {
         var trackerCategory: [TrackerCategory] = []
         var trackers: [Tracker] = []
+        var fixedTrackers: [Tracker] = []
         let request = NSFetchRequest<TrackerCategoryCoreData>(entityName: "TrackerCategoryCoreData")
         request.returnsObjectsAsFaults = false
         do {
             let categories = try context.fetch(request)
             do {
                 try categories.forEach { category in
-                    trackers = try category.trackers?.map({ try trackerStore.getTracker(set: $0) }) ?? []
+                    try category.trackers?.forEach { trk in
+                        let tracker = try trackerStore.getTracker(set: trk)
+                        if tracker.fixed {
+                            fixedTrackers.append(tracker)
+                        } else {
+                            trackers.append(tracker)
+                        }
+                    }
                     trackerCategory.append(TrackerCategory(title: category.title ?? "", trackers: trackers))
+                    trackers = []
                 }
+                trackerCategory.insert(TrackerCategory(
+                    title: NSLocalizedString(
+                        "pinned.title",
+                        comment: "Title pinned category"
+                    ),
+                    trackers: fixedTrackers),
+                                       at: 0
+                )
             } catch let error {
                 print(error)
             }

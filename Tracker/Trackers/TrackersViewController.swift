@@ -20,6 +20,7 @@ final class TrackersViewController: UIViewController,
     private var navBar: UINavigationBar?
     private let trackerCategoryStore = TrackerCategoryStore()
     private let trackerRecordStore = TrackerRecordStore()
+    private let trackerStore = TrackerStore()
     private lazy var titleLabel: UILabel = {
         let titleLabel = UILabel()
         titleLabel.text = NSLocalizedString(
@@ -205,6 +206,7 @@ final class TrackersViewController: UIViewController,
             guard let self = self else { return }
             self.setFilteredTracker()
         }
+        trackersCollectionView.allowsMultipleSelection = false
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -222,6 +224,7 @@ final class TrackersViewController: UIViewController,
     private func setCategoriesAndRecords() {
         trackerCategoryStore.delegate = self
         trackerRecordStore.delegate = self
+        trackerStore.delegate = self
         categories = trackerCategoryStore.getTrackerCategory()
         completedTrackers = trackerRecordStore.getCompletedTrackers()
     }
@@ -408,6 +411,7 @@ final class TrackersViewController: UIViewController,
                 comment: "Text message label"
             )
         }
+        filtersButton.isHidden = false
     }
     
     private func setMessageWhatTracker() {
@@ -417,6 +421,9 @@ final class TrackersViewController: UIViewController,
                 "whatWillWeTrack.message",
                 comment: "Text message label"
             )
+            filtersButton.isHidden = true
+        } else {
+            filtersButton.isHidden = false
         }
     }
     
@@ -440,6 +447,16 @@ final class TrackersViewController: UIViewController,
         updateDateLabel(date: datePicker.date)
         currentDate = datePicker.date
         checkDateAndReloadTrackersCollectionView()
+    }
+    
+    private func deleteTrack(tracker: Tracker) {
+        trackerRecordStore.removeRecords(tracker: tracker)
+        trackerStore.deleteTracker(tracker: tracker)
+    }
+    
+    private func fixedTrack(tracker: Tracker) {
+        trackerStore.fixedTracker(tracker: tracker)
+        setFilteredTracker()
     }
     
     @objc private func didChangedDatePicker() {
@@ -492,8 +509,8 @@ final class TrackersViewController: UIViewController,
             completedTrackers = trackerRecordStore.getCompletedTrackers()
             trackersCollectionView.performBatchUpdates({
                 trackersCollectionView.reloadItems(at: [IndexPath(row: indexPathRow, section: indexPathSection)])
+                setFilteredTracker()
             })
-            setFilteredTracker()
         }
     }
     
@@ -629,5 +646,98 @@ extension TrackersViewController: TrackerRecordStoreDelegate {
     func didRecordsUpdate() {
         completedTrackers = trackerRecordStore.getCompletedTrackers()
         checkDateAndReloadTrackersCollectionView()
+    }
+}
+
+extension TrackersViewController: TrackerStoreDelegate {
+    func didTrackerUpdate() {
+        categories = trackerCategoryStore.getTrackerCategory()
+        checkDateAndReloadTrackersCollectionView()
+    }
+}
+
+extension TrackersViewController: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemsAt indexPaths: [IndexPath], point: CGPoint) -> UIContextMenuConfiguration? {
+        guard indexPaths.count > 0 else {
+            return nil
+        }
+        
+        let indexPath = indexPaths[0]
+        let selectedTrack = visibleCategories[indexPath.section].trackers[indexPath.row]
+        var fixedTitle: String
+        if selectedTrack.fixed {
+            fixedTitle = NSLocalizedString(
+                "unpin",
+                comment: "Title unpin menu"
+            )
+        } else {
+            fixedTitle = NSLocalizedString(
+                "pin",
+                comment: "Title pin menu"
+            )
+        }
+        
+        return UIContextMenuConfiguration(actionProvider: { action in
+            return UIMenu(children: [
+                UIAction(title: fixedTitle) { [weak self] _ in
+                    guard let self = self else { return }
+                    self.fixedTrack(tracker: selectedTrack)
+                },
+                UIAction(title: NSLocalizedString(
+                    "edit",
+                    comment: "Title edit menu"
+                )) { [weak self] _ in
+                    
+                },
+                UIAction(
+                    title: NSLocalizedString(
+                        "delete",
+                        comment: "Title delete menu"
+                    ),
+                    attributes: .destructive
+                ) { [weak self] _ in
+                    guard let self = self else { return }
+                    let alert = UIAlertController(
+                        title: "",
+                        message: NSLocalizedString(
+                            "sureWantDeleteTracker.message",
+                            comment: "Message delete alert"
+                        ),
+                        preferredStyle: .actionSheet)
+                    
+                    let deleteAction = UIAlertAction(
+                        title: NSLocalizedString(
+                            "delete",
+                            comment: "Title delete button"
+                        ),
+                        style: .destructive
+                    ) { _ in
+                        self.deleteTrack(tracker: selectedTrack)
+                    }
+                    
+                    let cancelAction = UIAlertAction(
+                        title: NSLocalizedString(
+                            "cancel",
+                            comment: "Title cancel button"
+                        ),
+                        style: .cancel
+                    )
+                    
+                    alert.addAction(deleteAction)
+                    alert.addAction(cancelAction)
+                    
+                    self.present(alert, animated: true, completion: nil)
+                }
+            ])
+        })
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, contextMenuConfiguration configuration: UIContextMenuConfiguration, highlightPreviewForItemAt indexPath: IndexPath) -> UITargetedPreview? {
+        guard let cell = collectionView.cellForItem(at: IndexPath(row: indexPath.row, section: indexPath.section)) as? TrackersCollectionViewCell
+        else {
+            return nil
+        }
+        
+        return UITargetedPreview(view: cell.cardView)
     }
 }
