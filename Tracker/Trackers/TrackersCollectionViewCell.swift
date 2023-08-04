@@ -54,6 +54,14 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         return viewEmoji
     }()
     
+    private lazy var pinImageView: UIImageView = {
+        let pinImageView = UIImageView()
+        pinImageView.image = UIImage(named: "pin")
+        pinImageView.isHidden = true
+        pinImageView.translatesAutoresizingMaskIntoConstraints = false
+        return pinImageView
+    }()
+    
     private lazy var plusButton: UIButton = {
         let plusButton = UIButton()
         plusButton.layer.cornerRadius = 17
@@ -75,6 +83,7 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         
         viewEmoji.addSubview(emojiLabel)
         cardView.addSubview(viewEmoji)
+        cardView.addSubview(pinImageView)
         cardView.addSubview(nameLabel)
         contentView.addSubview(cardView)
         contentView.addSubview(daysLabel)
@@ -89,6 +98,10 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
             viewEmoji.widthAnchor.constraint(equalToConstant: 24),
             viewEmoji.topAnchor.constraint(equalTo: cardView.topAnchor, constant: 12),
             viewEmoji.leadingAnchor.constraint(equalTo: cardView.leadingAnchor, constant: 12),
+            pinImageView.heightAnchor.constraint(equalToConstant: 24),
+            pinImageView.widthAnchor.constraint(equalToConstant: 24),
+            pinImageView.topAnchor.constraint(equalTo: cardView.topAnchor, constant: 12),
+            pinImageView.trailingAnchor.constraint(equalTo: cardView.trailingAnchor, constant: -4),
             emojiLabel.centerXAnchor.constraint(equalTo: viewEmoji.centerXAnchor),
             emojiLabel.centerYAnchor.constraint(equalTo: viewEmoji.centerYAnchor),
             nameLabel.topAnchor.constraint(greaterThanOrEqualTo: viewEmoji.bottomAnchor, constant: 8),
@@ -121,6 +134,14 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
             self.plusButton.setImage(UIImage(named: "complete_button")?.withTintColor(color).image(alpha: 0.3), for: .normal)
         } else {
             self.plusButton.setImage(UIImage(named: "plus_button")?.withTintColor(color), for: .normal)
+        }
+    }
+    
+    func configureTrackersCollectionViewCellPinImage(with isPinned: Bool) {
+        if isPinned {
+            pinImageView.isHidden = false
+        } else {
+            pinImageView.isHidden = true
         }
     }
     

@@ -59,6 +59,9 @@
 		6CF71A442A791B13000E0964 /* FiltersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CF71A432A791B13000E0964 /* FiltersViewController.swift */; };
 		6CF71A492A7925B6000E0964 /* FiltersName.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CF71A482A7925B6000E0964 /* FiltersName.swift */; };
 		6CF71A4B2A792B8A000E0964 /* FiltersDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CF71A4A2A792B8A000E0964 /* FiltersDelegate.swift */; };
+		6CF72D7A2A7B9854006C6B73 /* EditingHabitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CF72D792A7B9854006C6B73 /* EditingHabitViewController.swift */; };
+		6CF72D7C2A7BB96F006C6B73 /* EditingIrregularEventViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CF72D7B2A7BB96F006C6B73 /* EditingIrregularEventViewController.swift */; };
+		6CF72D7E2A7BC675006C6B73 /* CreationEventDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6CF72D7D2A7BC675006C6B73 /* CreationEventDelegate.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -119,6 +122,9 @@
 		6CF71A432A791B13000E0964 /* FiltersViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FiltersViewController.swift; sourceTree = "<group>"; };
 		6CF71A482A7925B6000E0964 /* FiltersName.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FiltersName.swift; sourceTree = "<group>"; };
 		6CF71A4A2A792B8A000E0964 /* FiltersDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FiltersDelegate.swift; sourceTree = "<group>"; };
+		6CF72D792A7B9854006C6B73 /* EditingHabitViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditingHabitViewController.swift; sourceTree = "<group>"; };
+		6CF72D7B2A7BB96F006C6B73 /* EditingIrregularEventViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditingIrregularEventViewController.swift; sourceTree = "<group>"; };
+		6CF72D7D2A7BC675006C6B73 /* CreationEventDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreationEventDelegate.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -140,6 +146,7 @@
 				6C959F982A691C9900CB8BFE /* CreationEventViewController.swift */,
 				6CD97F8B2A17562E00B34256 /* CreationEvent.swift */,
 				6C31EFE22A16632B0049F5F4 /* CreationTableViewCell.swift */,
+				6CF72D7D2A7BC675006C6B73 /* CreationEventDelegate.swift */,
 			);
 			path = CreationEvent;
 			sourceTree = "<group>";
@@ -273,6 +280,7 @@
 				6CBF011E2A1E517F00CC0578 /* Trackers */,
 				6C0F27EF2A179E9C00993F02 /* Category */,
 				6C0F27E92A17874D00993F02 /* CreationEvent */,
+				6CF72D782A7B970F006C6B73 /* EditingEvent */,
 				6C72331E2A1B4EC900B99F3F /* DataSource */,
 				6C652C012A52C6A3005123E4 /* EmojiAndColorCollection */,
 				6C0F27EA2A1797EE00993F02 /* Shedule */,
@@ -310,6 +318,15 @@
 				6C0F27F22A17A8F900993F02 /* ListTableViewCell.swift */,
 			);
 			path = ListTableViewCell;
+			sourceTree = "<group>";
+		};
+		6CF72D782A7B970F006C6B73 /* EditingEvent */ = {
+			isa = PBXGroup;
+			children = (
+				6CF72D792A7B9854006C6B73 /* EditingHabitViewController.swift */,
+				6CF72D7B2A7BB96F006C6B73 /* EditingIrregularEventViewController.swift */,
+			);
+			path = EditingEvent;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -398,6 +415,7 @@
 				6C2F5F942A135A400003AD76 /* Extensions.swift in Sources */,
 				6C959FA42A69618E00CB8BFE /* TrackerStore.swift in Sources */,
 				6C0F27EC2A17983800993F02 /* CategoryViewController.swift in Sources */,
+				6CF72D7A2A7B9854006C6B73 /* EditingHabitViewController.swift in Sources */,
 				6C2790712A6AA13B005B4926 /* TrackerCoreDataError.swift in Sources */,
 				6C7531CA2A126E7800A8CBAE /* TabBarController.swift in Sources */,
 				6C27906F2A6A6AAF005B4926 /* TrackerCategoryStoreDelegate.swift in Sources */,
@@ -415,6 +433,7 @@
 				6C31EFE52A16756A0049F5F4 /* SheduleViewController.swift in Sources */,
 				6C947E102A161CFB00A8E3BE /* CreationTrackerViewController.swift in Sources */,
 				6C7531CC2A126E9F00A8CBAE /* StatisticViewController.swift in Sources */,
+				6CF72D7E2A7BC675006C6B73 /* CreationEventDelegate.swift in Sources */,
 				6CDF75002A725C4F00619FB1 /* OnboardingViewController.swift in Sources */,
 				6CDF75272A7294EB00619FB1 /* CategoryViewModel.swift in Sources */,
 				6C7233222A1B6A3600B99F3F /* GeometricParams.swift in Sources */,
@@ -429,6 +448,7 @@
 				6CF71A492A7925B6000E0964 /* FiltersName.swift in Sources */,
 				6CC4F9D82A026FB300DE2409 /* SceneDelegate.swift in Sources */,
 				6C9E221F2A68376D002B50EA /* TrackersCollectionViewCellModel.swift in Sources */,
+				6CF72D7C2A7BB96F006C6B73 /* EditingIrregularEventViewController.swift in Sources */,
 				6C959FAC2A696A2800CB8BFE /* UIColorMarshalling.swift in Sources */,
 				6CF71A442A791B13000E0964 /* FiltersViewController.swift in Sources */,
 				6C2073AC2A7A76CA005CB467 /* TrackerStoreDelegate.swift in Sources */,

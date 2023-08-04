@@ -44,6 +44,7 @@ final class TrackerCategoryStore: NSObject {
             #keyPath(TrackerCategoryCoreData.title),
             title
         )
+        
         do {
             if let oldCategory = try context.fetch(request).first {
                 oldCategory.addToTrackers(trackerStore.addTracker(tracker: tracker, context: context))
@@ -55,6 +56,48 @@ final class TrackerCategoryStore: NSObject {
         } catch let error {
             print(error)
         }
+        
+        do {
+            try context.save()
+        } catch let error {
+            print(error)
+        }
+    }
+    
+    func updateTracker(title: String, tracker: Tracker) {
+        let requestTracker = NSFetchRequest<TrackerCoreData>(entityName: "TrackerCoreData")
+        requestTracker.returnsObjectsAsFaults = false
+        requestTracker.predicate = NSPredicate(
+            format: "%K == %@",
+            #keyPath(TrackerCoreData.idTracker),
+            tracker.id as NSUUID
+        )
+        
+        do {
+            guard let trackerFromDB = try context.fetch(requestTracker).first else { throw TrackerCoreDataError.getTrackerCoreDataError}
+            trackerStore.updateTracker(tracker: tracker, trackerCoreData: trackerFromDB)
+            let oldCategoryTrackerFromDB = trackerFromDB.category?.title
+            if oldCategoryTrackerFromDB != title {
+                let requestCategories = NSFetchRequest<TrackerCategoryCoreData>(entityName: "TrackerCategoryCoreData")
+                requestCategories.returnsObjectsAsFaults = false
+
+                do {
+                    let categories = try context.fetch(requestCategories)
+                    categories.forEach { category in
+                        if category.title == title {
+                            category.addToTrackers(trackerFromDB)
+                        } else if category.title == oldCategoryTrackerFromDB {
+                            category.removeFromTrackers(trackerFromDB)
+                        }
+                    }
+                } catch let error {
+                    print(error)
+                }
+            }
+        } catch let error {
+            print(error)
+        }
+
         do {
             try context.save()
         } catch let error {
@@ -65,6 +108,7 @@ final class TrackerCategoryStore: NSObject {
     func addCategory(title: String) {
         let request = NSFetchRequest<TrackerCategoryCoreData>(entityName: "TrackerCategoryCoreData")
         request.returnsObjectsAsFaults = false
+        
         do {
             let categories = try context.fetch(request)
             categories.forEach { category in
@@ -73,9 +117,11 @@ final class TrackerCategoryStore: NSObject {
         } catch let error {
             print(error)
         }
+        
         let trackerCategotyCoreData = TrackerCategoryCoreData(context: context)
         trackerCategotyCoreData.title = title
         trackerCategotyCoreData.isChecked = true
+        
         do {
             try context.save()
         } catch let error {
@@ -86,6 +132,7 @@ final class TrackerCategoryStore: NSObject {
     func setSelectedCategory(title: String) {
         let request = NSFetchRequest<TrackerCategoryCoreData>(entityName: "TrackerCategoryCoreData")
         request.returnsObjectsAsFaults = false
+        
         do {
             let categories = try context.fetch(request)
             categories.forEach { category in
@@ -115,6 +162,7 @@ final class TrackerCategoryStore: NSObject {
             #keyPath(TrackerCategoryCoreData.isChecked),
             NSNumber(value: true)
         )
+        
         do {
             if let checkedCategory = try context.fetch(request).first {
                 result = checkedCategory.title ?? ""
@@ -132,6 +180,7 @@ final class TrackerCategoryStore: NSObject {
         let request = NSFetchRequest<TrackerCategoryCoreData>(entityName: "TrackerCategoryCoreData")
         request.returnsObjectsAsFaults = false
         request.sortDescriptors = [NSSortDescriptor(keyPath: \TrackerCategoryCoreData.title, ascending: true)]
+        
         do {
             let categories = try context.fetch(request)
             categories.forEach { category in
@@ -140,6 +189,7 @@ final class TrackerCategoryStore: NSObject {
         } catch let error {
             print(error)
         }
+        
         return result
     }
     
@@ -149,6 +199,7 @@ final class TrackerCategoryStore: NSObject {
         var fixedTrackers: [Tracker] = []
         let request = NSFetchRequest<TrackerCategoryCoreData>(entityName: "TrackerCategoryCoreData")
         request.returnsObjectsAsFaults = false
+        
         do {
             let categories = try context.fetch(request)
             do {

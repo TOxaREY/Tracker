@@ -56,3 +56,7 @@
 "edit" = "Edit";
 "unpin" = "Unpin";
 "pin" = "Рin";
+"editingHabit.title" = "Editing habit";
+"editingIrregularEvent.title" = "Editing irregular event";
+"save" = "Save";
+

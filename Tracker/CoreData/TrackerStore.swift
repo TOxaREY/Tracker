@@ -48,6 +48,15 @@ final class TrackerStore: NSObject {
         return trackerCoreData
     }
     
+    func updateTracker(tracker: Tracker, trackerCoreData: TrackerCoreData) -> TrackerCoreData {
+        trackerCoreData.name = tracker.name
+        trackerCoreData.color = uiColorMarshalling.hexString(from: tracker.color)
+        trackerCoreData.emoji = tracker.emoji
+        trackerCoreData.shedule = weekDaysMarshalling.weekDaysToString(from: tracker.shedule)
+        trackerCoreData.fixed = NSNumber(value: tracker.fixed)
+        return trackerCoreData
+    }
+    
     func getTracker(set: NSSet.Element) throws -> Tracker {
         guard let tracker = set as? TrackerCoreData else { throw TrackerCoreDataError.trackerCoreDataClassInvalid}
         guard let id = tracker.idTracker else { throw TrackerCoreDataError.decodingErrorInvalidId }

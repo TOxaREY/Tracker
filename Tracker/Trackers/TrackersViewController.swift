@@ -449,7 +449,7 @@ final class TrackersViewController: UIViewController,
         checkDateAndReloadTrackersCollectionView()
     }
     
-    private func deleteTrack(tracker: Tracker) {
+    private func deleteTracker(tracker: Tracker) {
         trackerRecordStore.removeRecords(tracker: tracker)
         trackerStore.deleteTracker(tracker: tracker)
     }
@@ -615,6 +615,14 @@ extension TrackersViewController: UICollectionViewDataSource {
             )
             cell?.configureTrackersCollectionViewCellPlusButtonImage(isCompletedImage: false, color: color)
         }
+        if visibleCategories[indexPath.section].title == NSLocalizedString(
+            "pinned.title",
+            comment: "Title pinned category"
+        ) {
+            cell?.configureTrackersCollectionViewCellPinImage(with: true)
+        } else {
+            cell?.configureTrackersCollectionViewCellPinImage(with: false)
+        }
         return cell!
     }
     
@@ -687,7 +695,31 @@ extension TrackersViewController: UICollectionViewDelegate {
                     "edit",
                     comment: "Title edit menu"
                 )) { [weak self] _ in
-                    
+                    guard let self = self else { return }
+                    if selectedTrack.shedule != nil {
+                        let editingHabitVC = EditingHabitViewController()
+                        editingHabitVC.creationEvent.id = selectedTrack.id
+                        editingHabitVC.creationEvent.name = selectedTrack.name
+                        editingHabitVC.creationEvent.categoryName = self.visibleCategories[indexPath.section].title
+                        editingHabitVC.creationEvent.color = selectedTrack.color
+                        editingHabitVC.creationEvent.emoji = selectedTrack.emoji
+                        editingHabitVC.creationEvent.shedule = selectedTrack.shedule!
+                        editingHabitVC.creationEvent.fixed = selectedTrack.fixed
+                        let navVC = UINavigationController(rootViewController: editingHabitVC)
+                        navVC.modalPresentationStyle = .automatic
+                        self.present(navVC, animated: true)
+                    } else {
+                        let editingIrregularEventVC = EditingIrregularEventViewController()
+                        editingIrregularEventVC.creationEvent.id = selectedTrack.id
+                        editingIrregularEventVC.creationEvent.name = selectedTrack.name
+                        editingIrregularEventVC.creationEvent.categoryName = self.visibleCategories[indexPath.section].title
+                        editingIrregularEventVC.creationEvent.color = selectedTrack.color
+                        editingIrregularEventVC.creationEvent.emoji = selectedTrack.emoji
+                        editingIrregularEventVC.creationEvent.fixed = selectedTrack.fixed
+                        let navVC = UINavigationController(rootViewController: editingIrregularEventVC)
+                        navVC.modalPresentationStyle = .automatic
+                        self.present(navVC, animated: true)
+                    }
                 },
                 UIAction(
                     title: NSLocalizedString(
@@ -712,7 +744,7 @@ extension TrackersViewController: UICollectionViewDelegate {
                         ),
                         style: .destructive
                     ) { _ in
-                        self.deleteTrack(tracker: selectedTrack)
+                        self.deleteTracker(tracker: selectedTrack)
                     }
                     
                     let cancelAction = UIAlertAction(

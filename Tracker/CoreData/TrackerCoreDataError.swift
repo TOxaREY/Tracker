@@ -15,4 +15,5 @@ enum TrackerCoreDataError: Error {
     case decodingErrorInvalidEmoji
     case decodingErrorInvalidShedule
     case decodingErrorInvalidFixed
+    case getTrackerCoreDataError
 }

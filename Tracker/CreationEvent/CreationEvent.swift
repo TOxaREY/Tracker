@@ -13,6 +13,8 @@ final class CreationEvent {
     var shedule: [WeekDay] = []
     var color: UIColor? = nil
     var emoji = ""
+    var id = UUID()
+    var fixed: Bool = false
     
     func sheduleString() -> String {
         var namesDaysWeek = ""

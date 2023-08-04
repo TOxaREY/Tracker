@@ -43,11 +43,13 @@ final class TrackerRecordStore: NSObject {
             #keyPath(TrackerCoreData.idTracker),
             id as NSUUID
         )
+        
         do {
             let tracker = try context.fetch(request).first
             let record = TrackerRecordCoreData(context: context)
             record.date = date
             record.tracker = tracker
+            
             do {
                 try context.save()
             } catch let error {
@@ -69,6 +71,7 @@ final class TrackerRecordStore: NSObject {
             #keyPath(TrackerRecordCoreData.date),
             date as NSDate
         )
+        
         do {
             let record = try context.fetch(request).first ?? NSManagedObject()
             context.delete(record)
@@ -92,6 +95,7 @@ final class TrackerRecordStore: NSObject {
             #keyPath(TrackerCoreData.idTracker),
             tracker.id as NSUUID
         )
+        
         do {
             let records = try context.fetch(request)
             records.forEach { record in
@@ -112,6 +116,7 @@ final class TrackerRecordStore: NSObject {
         var trackerRecords: [TrackerRecord] = []
         let request = NSFetchRequest<TrackerRecordCoreData>(entityName: "TrackerRecordCoreData")
         request.returnsObjectsAsFaults = false
+        
         do {
             let completedTrackers = try context.fetch(request)
             completedTrackers.forEach { record in
@@ -122,6 +127,25 @@ final class TrackerRecordStore: NSObject {
             return []
         }
         return trackerRecords
+    }
+    
+    func getCompletedTrackCount(id: UUID) -> Int {
+        let request = NSFetchRequest<TrackerRecordCoreData>(entityName: "TrackerRecordCoreData")
+        request.returnsObjectsAsFaults = false
+        request.predicate = NSPredicate(
+            format: "%K.%K == %@",
+            #keyPath(TrackerRecordCoreData.tracker),
+            #keyPath(TrackerCoreData.idTracker),
+            id as NSUUID
+        )
+
+        do {
+            let records = try context.fetch(request)
+            return records.count
+        } catch let error {
+            print(error)
+        }
+        return 0
     }
 }
 
