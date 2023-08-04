@@ -212,8 +212,14 @@ final class TrackerCategoryStore: NSObject {
                             trackers.append(tracker)
                         }
                     }
+                    trackers.sort {
+                        $0.name.lowercased() < $1.name.lowercased()
+                    }
                     trackerCategory.append(TrackerCategory(title: category.title ?? "", trackers: trackers))
                     trackers = []
+                }
+                fixedTrackers.sort {
+                    $0.name.lowercased() < $1.name.lowercased()
                 }
                 trackerCategory.insert(TrackerCategory(
                     title: NSLocalizedString(
@@ -230,6 +236,10 @@ final class TrackerCategoryStore: NSObject {
             print(error)
             return []
         }
+        trackerCategory.sort {
+            $0.title.lowercased() < $1.title.lowercased()
+        }
+        
         return trackerCategory
     }
 }
