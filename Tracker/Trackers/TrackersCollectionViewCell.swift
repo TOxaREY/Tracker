@@ -38,8 +38,9 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
     
     private lazy var daysLabel: UILabel = {
         let daysLabel = UILabel()
+        let colors = Colors()
         daysLabel.font = .ypMedium_12
-        daysLabel.textColor = .ypBlack
+        daysLabel.textColor = colors.darkModeForegroundColor
         daysLabel.textAlignment = .left
         daysLabel.translatesAutoresizingMaskIntoConstraints = false
         return daysLabel

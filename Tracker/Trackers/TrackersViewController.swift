@@ -18,6 +18,7 @@ final class TrackersViewController: UIViewController,
     @Observable
     var filtersName: FiltersName = FiltersName.AllTrackers
     private var navBar: UINavigationBar?
+    private let colors = Colors()
     private let trackerCategoryStore = TrackerCategoryStore()
     private let trackerRecordStore = TrackerRecordStore()
     private let trackerStore = TrackerStore()
@@ -27,7 +28,7 @@ final class TrackersViewController: UIViewController,
             "trackers.title",
             comment: "Title trackers"
         )
-        titleLabel.textColor = .ypBlack
+        titleLabel.textColor = colors.darkModeForegroundColor
         titleLabel.textAlignment = .left
         titleLabel.font = .ypBold_34
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -134,7 +135,7 @@ final class TrackersViewController: UIViewController,
             "whatWillWeTrack.message",
             comment: "Text message label"
         )
-        messageLabel.textColor = .ypBlack
+        messageLabel.textColor = colors.darkModeForegroundColor
         messageLabel.textAlignment = .center
         messageLabel.font = .ypMedium_12
         messageLabel.isHidden = true
@@ -190,7 +191,7 @@ final class TrackersViewController: UIViewController,
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.view.backgroundColor = .ypWhite
+        self.view.backgroundColor = colors.darkModeBackgroundColor
         setCategoriesAndRecords()
         makeNavBar()
         addSubviews()
@@ -238,7 +239,7 @@ final class TrackersViewController: UIViewController,
             action: #selector(didTapAddTrackerButton),
             for: .touchUpInside
         )
-        addTrackerButton.tintColor = .ypBlack
+        addTrackerButton.tintColor = colors.darkModeForegroundColor
         let leftNavBarItem = UIBarButtonItem(customView: addTrackerButton)
         self.navigationItem.leftBarButtonItem = leftNavBarItem
         self.navBar = navBar

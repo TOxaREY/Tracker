@@ -2,7 +2,7 @@
 //  TrackerTests.swift
 //  TrackerTests
 //
-//  Created by Anton Reynikov on 04.08.2023.
+//  Created by Anton Reynikov on 08.08.2023.
 //
 
 import XCTest
@@ -15,5 +15,23 @@ final class TrackerTests: XCTestCase {
         let trackersVC = TrackersViewController()
         
         assertSnapshot(matching: trackersVC, as: .image(traits: .init(userInterfaceStyle: .light)))
+    }
+    
+    func testTabBarControllerLightTheme() {
+        let tabBarController = TabBarController()
+        
+        assertSnapshot(matching: tabBarController, as: .image(traits: .init(userInterfaceStyle: .light)))
+    }
+    
+    func testTrackersViewControllerDarkTheme() {
+        let trackersVC = TrackersViewController()
+        
+        assertSnapshot(matching: trackersVC, as: .image(traits: .init(userInterfaceStyle: .dark)))
+    }
+    
+    func testTabBarControllerDarkTheme() {
+        let tabBarController = TabBarController()
+        
+        assertSnapshot(matching: tabBarController, as: .image(traits: .init(userInterfaceStyle: .dark)))
     }
 }
