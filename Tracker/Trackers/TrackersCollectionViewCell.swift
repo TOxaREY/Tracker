@@ -8,6 +8,8 @@
 import UIKit
 
 final class TrackersCollectionViewCell: UICollectionViewCell {
+    private let analyticsService = AnalyticsService()
+    
     lazy var cardView: UIView = {
         let cardView = UIView()
         cardView.layer.cornerRadius = 16
@@ -147,6 +149,7 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
     }
     
     @objc private func didTapPlusButton() {
+        analyticsService.report(event: .click, param: .track)
         NotificationCenter.default.post(
             name: NSNotification.Name(rawValue: "tapPlusButton"),
             object: nil,

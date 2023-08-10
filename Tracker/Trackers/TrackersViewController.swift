@@ -22,6 +22,7 @@ final class TrackersViewController: UIViewController,
     private let trackerCategoryStore = TrackerCategoryStore()
     private let trackerRecordStore = TrackerRecordStore()
     private let trackerStore = TrackerStore()
+    private let analyticsService = AnalyticsService()
     private lazy var titleLabel: UILabel = {
         let titleLabel = UILabel()
         titleLabel.text = NSLocalizedString(
@@ -208,6 +209,18 @@ final class TrackersViewController: UIViewController,
             self.setFilteredTracker()
         }
         trackersCollectionView.allowsMultipleSelection = false
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        analyticsService.report(event: .open, param: nil)
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        
+        analyticsService.report(event: .close, param: nil)
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -477,6 +490,7 @@ final class TrackersViewController: UIViewController,
     }
     
     @objc private func didTapAddTrackerButton() {
+        analyticsService.report(event: .click, param: .add_track)
         let creationTrackerVC = CreationTrackerViewController()
         creationTrackerVC.delegateTrackers = self
         let navVC = UINavigationController(rootViewController: creationTrackerVC)
@@ -516,6 +530,7 @@ final class TrackersViewController: UIViewController,
     }
     
     @objc private func didFiltersButton() {
+        analyticsService.report(event: .click, param: .filter)
         let filtersVC = FiltersViewController()
         filtersVC.delegateFilters = self
         let navVC = UINavigationController(rootViewController: filtersVC)
@@ -697,6 +712,7 @@ extension TrackersViewController: UICollectionViewDelegate {
                     comment: "Title edit menu"
                 )) { [weak self] _ in
                     guard let self = self else { return }
+                    self.analyticsService.report(event: .click, param: .edit)
                     if selectedTrack.shedule != nil {
                         let editingHabitVC = EditingHabitViewController()
                         editingHabitVC.creationEvent.id = selectedTrack.id
@@ -730,6 +746,7 @@ extension TrackersViewController: UICollectionViewDelegate {
                     attributes: .destructive
                 ) { [weak self] _ in
                     guard let self = self else { return }
+                    self.analyticsService.report(event: .click, param: .delete)
                     let alert = UIAlertController(
                         title: "",
                         message: NSLocalizedString(
