@@ -59,4 +59,6 @@
 "editingHabit.title" = "Editing habit";
 "editingIrregularEvent.title" = "Editing irregular event";
 "save" = "Save";
+"nothingToAnalyze.message" = "Nothing to analyze";
+"trackersCompleted.title" = "Trackers completed";
 

@@ -59,3 +59,5 @@
 "editingHabit.title" = "Редактирование привычки";
 "editingIrregularEvent.title" = "Редактирование нерегулярного события";
 "save" = "Сохранить";
+"nothingToAnalyze.message" = "Анализировать пока нечего";
+"trackersCompleted.title" = "Трекеров завершено";

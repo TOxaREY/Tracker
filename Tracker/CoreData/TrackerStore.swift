@@ -57,6 +57,20 @@ final class TrackerStore: NSObject {
         return trackerCoreData
     }
     
+    func getTrackersCount() -> Int {
+        let request = NSFetchRequest<TrackerCoreData>(entityName: "TrackerCoreData")
+        request.returnsObjectsAsFaults = false
+        
+        do {
+            let trackers = try context.fetch(request)
+            return trackers.count
+        } catch let error {
+            print(error)
+        }
+        
+        return 0
+    }
+    
     func getTracker(set: NSSet.Element) throws -> Tracker {
         guard let tracker = set as? TrackerCoreData else { throw TrackerCoreDataError.trackerCoreDataClassInvalid}
         guard let id = tracker.idTracker else { throw TrackerCoreDataError.decodingErrorInvalidId }
