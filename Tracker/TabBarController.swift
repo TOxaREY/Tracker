@@ -8,6 +8,7 @@
 import UIKit
 
 final class TabBarController: UITabBarController {
+    private let colors = Colors()
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
@@ -15,13 +16,19 @@ final class TabBarController: UITabBarController {
         let statisticViewController = UINavigationController(rootViewController: StatisticViewController())
         
         trackersViewController.tabBarItem = UITabBarItem(
-            title: "Трекеры",
+            title: NSLocalizedString(
+                "trackers.title",
+                comment: "Title trackers"
+            ),
             image: UIImage(named: "tab_trackers_active"),
             selectedImage: nil
         )
         
         statisticViewController.tabBarItem = UITabBarItem(
-            title: "Статистика",
+            title: NSLocalizedString(
+                "statistics.title",
+                comment: "Title statistics"
+            ),
             image: UIImage(named: "tab_statistic_inactive"),
             selectedImage: nil
         )
@@ -29,8 +36,32 @@ final class TabBarController: UITabBarController {
         UITabBarItem.appearance().setTitleTextAttributes(fontAttributes, for: .normal)
         UITabBarItem.appearance().setTitleTextAttributes([.foregroundColor: UIColor.ypBlue], for: .selected)
         self.tabBar.unselectedItemTintColor = .ypGray
-        self.tabBar.backgroundImage = UIImage.colorForNavBar(color: .ypWhite)
-        self.tabBar.shadowImage = UIImage.colorForNavBar(color: .ypGray)
+        setTabBarUserInterfaceStyle()
         self.viewControllers = [trackersViewController, statisticViewController]
+    }
+    
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        
+        setTabBarUserInterfaceStyle()
+    }
+    
+    private func setTabBarUserInterfaceStyle() {
+        switch traitCollection.userInterfaceStyle {
+        case .light, .unspecified:
+            if #available(iOS 15, *) {
+            } else {
+                self.tabBar.backgroundImage = UIImage.colorForTabBar(color: colors.darkModeBackgroundColor)
+                self.tabBar.shadowImage = UIImage.colorForTabBar(color: .ypGray)
+            }
+        case .dark:
+            if #available(iOS 15, *) {
+            } else {
+                self.tabBar.backgroundImage = UIImage.colorForTabBar(color: colors.darkModeBackgroundColor)
+                self.tabBar.shadowImage = UIImage.colorForTabBar(color: UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.3))
+            }
+        @unknown default:
+            fatalError()
+        }
     }
 }

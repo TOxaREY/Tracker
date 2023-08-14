@@ -8,7 +8,9 @@
 import UIKit
 
 final class TrackersCollectionViewCell: UICollectionViewCell {
-    private lazy var cardView: UIView = {
+    private let analyticsService = AnalyticsService()
+    
+    lazy var cardView: UIView = {
         let cardView = UIView()
         cardView.layer.cornerRadius = 16
         cardView.clipsToBounds = true
@@ -38,8 +40,9 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
     
     private lazy var daysLabel: UILabel = {
         let daysLabel = UILabel()
+        let colors = Colors()
         daysLabel.font = .ypMedium_12
-        daysLabel.textColor = .ypBlack
+        daysLabel.textColor = colors.darkModeForegroundColor
         daysLabel.textAlignment = .left
         daysLabel.translatesAutoresizingMaskIntoConstraints = false
         return daysLabel
@@ -52,6 +55,14 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         viewEmoji.backgroundColor = UIColor(hex: "#ffffff4d")
         viewEmoji.translatesAutoresizingMaskIntoConstraints = false
         return viewEmoji
+    }()
+    
+    private lazy var pinImageView: UIImageView = {
+        let pinImageView = UIImageView()
+        pinImageView.image = UIImage(named: "pin")
+        pinImageView.isHidden = true
+        pinImageView.translatesAutoresizingMaskIntoConstraints = false
+        return pinImageView
     }()
     
     private lazy var plusButton: UIButton = {
@@ -75,6 +86,7 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         
         viewEmoji.addSubview(emojiLabel)
         cardView.addSubview(viewEmoji)
+        cardView.addSubview(pinImageView)
         cardView.addSubview(nameLabel)
         contentView.addSubview(cardView)
         contentView.addSubview(daysLabel)
@@ -89,6 +101,10 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
             viewEmoji.widthAnchor.constraint(equalToConstant: 24),
             viewEmoji.topAnchor.constraint(equalTo: cardView.topAnchor, constant: 12),
             viewEmoji.leadingAnchor.constraint(equalTo: cardView.leadingAnchor, constant: 12),
+            pinImageView.heightAnchor.constraint(equalToConstant: 24),
+            pinImageView.widthAnchor.constraint(equalToConstant: 24),
+            pinImageView.topAnchor.constraint(equalTo: cardView.topAnchor, constant: 12),
+            pinImageView.trailingAnchor.constraint(equalTo: cardView.trailingAnchor, constant: -4),
             emojiLabel.centerXAnchor.constraint(equalTo: viewEmoji.centerXAnchor),
             emojiLabel.centerYAnchor.constraint(equalTo: viewEmoji.centerYAnchor),
             nameLabel.topAnchor.constraint(greaterThanOrEqualTo: viewEmoji.bottomAnchor, constant: 8),
@@ -124,7 +140,12 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         }
     }
     
+    func configureTrackersCollectionViewCellPinImage(with isPinned: Bool) {
+        pinImageView.isHidden = !isPinned
+    }
+    
     @objc private func didTapPlusButton() {
+        analyticsService.report(event: .click, param: .track)
         NotificationCenter.default.post(
             name: NSNotification.Name(rawValue: "tapPlusButton"),
             object: nil,

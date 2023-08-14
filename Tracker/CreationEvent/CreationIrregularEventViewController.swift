@@ -12,7 +12,10 @@ final class CreationIrregularEventViewController: CreationEventViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.title = "Новое нерегулярное событие"
+        self.title = NSLocalizedString(
+            "newIrregularEvent.title",
+            comment: "New irregular event title"
+        )
     }
     
     override func setContainerAndTableViewHeight(containerHeight: CGFloat, tableViewHeight: CGFloat) {
@@ -37,7 +40,13 @@ final class CreationIrregularEventViewController: CreationEventViewController {
     
     override func setDataSource() {
         let items: [(title: String, subtitle: String)] = [
-            ("Категория", creationEvent.categoryName)
+            (
+                NSLocalizedString(
+                    "category.title",
+                    comment: "Title category"
+                ),
+                creationEvent.categoryName
+            )
         ]
         dataSource = TableViewStaticDataSource(cells: items.map { CreationTableViewCell(title: $0.title, subtitle: $0.subtitle) })
         tableView.dataSource = dataSource

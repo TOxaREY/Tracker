@@ -13,12 +13,17 @@ final class CreationEvent {
     var shedule: [WeekDay] = []
     var color: UIColor? = nil
     var emoji = ""
+    var id = UUID()
+    var fixed: Bool = false
     
     func sheduleString() -> String {
         var namesDaysWeek = ""
         var namesDaysWeekArray: [String] = []
         if shedule.count == 7 {
-            namesDaysWeek = "Каждый день"
+            namesDaysWeek = NSLocalizedString(
+                "everyDay",
+                comment: "Shedule every day"
+            )
         } else {
             shedule.sort{ $0.rawValue < $1.rawValue }
             shedule.forEach { day in

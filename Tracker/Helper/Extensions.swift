@@ -55,7 +55,7 @@ extension UIFont {
 }
 
 extension UIImage {
-    class func colorForNavBar(color: UIColor) -> UIImage {
+    class func colorForTabBar(color: UIColor) -> UIImage {
         let rect = CGRectMake(0.0, 0.0, 1.0, 1.0)
         UIGraphicsBeginImageContext(rect.size)
         let context = UIGraphicsGetCurrentContext()
@@ -74,28 +74,19 @@ extension UIImage {
         UIGraphicsEndImageContext()
         return newImage
     }
-}
-
-extension Int {
-    func days() -> String {
-        var dayString: String!
-        if "1".contains("\(self % 10)") {
-            dayString = "день"
-            
+    
+    static func gradientImage(bounds: CGRect, colors: [UIColor]) -> UIImage {
+        let gradientLayer = CAGradientLayer()
+        gradientLayer.frame = bounds
+        gradientLayer.colors = colors.map{ $0.cgColor }
+        gradientLayer.startPoint = CGPoint(x: 0.0, y: 0.5)
+        gradientLayer.endPoint = CGPoint(x: 1.0, y: 0.5)
+        
+        let renderer = UIGraphicsImageRenderer(bounds: bounds)
+        
+        return renderer.image { ctx in
+            gradientLayer.render(in: ctx.cgContext)
         }
-        if "234".contains("\(self % 10)") {
-            dayString = "дня"
-            
-        }
-        if "567890".contains("\(self % 10)") {
-            dayString = "дней"
-            
-        }
-        if 11...14 ~= self % 100 {
-            dayString = "дней"
-            
-        }
-        return "\(self) " + dayString
     }
 }
 
@@ -107,14 +98,15 @@ extension Collection {
 
 extension AppDelegate {
     func setNavigationBarAndTabBarAppearance() {
+        let colors = Colors()
         if #available(iOS 15, *) {
             let navigationBarAppearance = UINavigationBarAppearance()
             navigationBarAppearance.configureWithOpaqueBackground()
             navigationBarAppearance.titleTextAttributes = [
                 NSAttributedString.Key.font: UIFont.ypMedium_16,
-                NSAttributedString.Key.foregroundColor: UIColor.ypBlack
+                NSAttributedString.Key.foregroundColor: colors.darkModeForegroundColor
             ]
-            navigationBarAppearance.backgroundColor = UIColor.ypWhite
+            navigationBarAppearance.backgroundColor = colors.darkModeBackgroundColor
             navigationBarAppearance.shadowColor = .clear
             UINavigationBar.appearance().standardAppearance = navigationBarAppearance
             UINavigationBar.appearance().compactAppearance = navigationBarAppearance
@@ -122,25 +114,25 @@ extension AppDelegate {
             
             let tabBarApperance = UITabBarAppearance()
             tabBarApperance.configureWithOpaqueBackground()
-            tabBarApperance.backgroundImage = UIImage.colorForNavBar(color: .ypWhite)
-            tabBarApperance.shadowImage = UIImage.colorForNavBar(color: UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.3))
+            tabBarApperance.backgroundColor = colors.darkModeBackgroundColor
+            tabBarApperance.shadowImage = UIImage.colorForTabBar(color: UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.3))
             UITabBar.appearance().scrollEdgeAppearance = tabBarApperance
             UITabBar.appearance().standardAppearance = tabBarApperance
         } else {
             UINavigationBar.appearance().setBackgroundImage(UIImage(), for: UIBarPosition.any, barMetrics: UIBarMetrics.default)
             UINavigationBar.appearance().shadowImage = UIImage()
-            UINavigationBar.appearance().tintColor = UIColor.ypWhite
-            UINavigationBar.appearance().barTintColor = UIColor.ypWhite
+            UINavigationBar.appearance().tintColor = colors.darkModeBackgroundColor
+            UINavigationBar.appearance().barTintColor = colors.darkModeBackgroundColor
             UINavigationBar.appearance().isTranslucent = false
             UINavigationBar.appearance().clipsToBounds = false
-            UINavigationBar.appearance().backgroundColor = UIColor.ypWhite
+            UINavigationBar.appearance().backgroundColor = colors.darkModeBackgroundColor
             UINavigationBar.appearance().titleTextAttributes = [
                 NSAttributedString.Key.font: UIFont.ypMedium_16,
-                NSAttributedString.Key.foregroundColor: UIColor.ypBlack
+                NSAttributedString.Key.foregroundColor: colors.darkModeForegroundColor
             ]
             
-            UITabBar.appearance().backgroundImage = UIImage.colorForNavBar(color: .ypWhite)
-            UITabBar.appearance().shadowImage = UIImage.colorForNavBar(color: UIColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.3))
+            UITabBar.appearance().backgroundImage = UIImage.colorForTabBar(color: colors.darkModeBackgroundColor)
+            UITabBar.appearance().shadowImage = UIImage.colorForTabBar(color: .ypGray)
         }
     }
     

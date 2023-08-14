@@ -24,7 +24,8 @@ class CreationEventViewController: UIViewController, DataSourceDelegate {
         return tableView
     }()
     
-    private let trackerCategoryStore = TrackerCategoryStore()
+    let trackerCategoryStore = TrackerCategoryStore()
+    private let trackerRecordStore = TrackerRecordStore()
     private var isLimitSimbol = false
     private var containerHeightAnchorConstraint: NSLayoutConstraint?
     private lazy var container: UIView = {
@@ -40,10 +41,26 @@ class CreationEventViewController: UIViewController, DataSourceDelegate {
         return scrollView
     }()
     
+    private lazy var numberOfDaysLabel: UILabel = {
+        let numberOfDaysLabel = UILabel()
+        numberOfDaysLabel.textColor = .ypBlack
+        numberOfDaysLabel.textAlignment = .center
+        numberOfDaysLabel.font = .ypBold_32
+        numberOfDaysLabel.isHidden = true
+        numberOfDaysLabel.translatesAutoresizingMaskIntoConstraints = false
+        return numberOfDaysLabel
+    }()
+    
     private lazy var nameTrackerTextField: UITextField = {
         let nameTrackerTextField = UITextField()
         nameTrackerTextField.delegate = self
-        nameTrackerTextField.attributedPlaceholder = NSAttributedString(string: "Введите название трекера", attributes: [NSAttributedString.Key.foregroundColor: UIColor.ypGray])
+        nameTrackerTextField.attributedPlaceholder = NSAttributedString(
+            string: NSLocalizedString(
+                "nameTracker.placeholder",
+                comment: "Placeholder name tracker"
+            ),
+            attributes: [NSAttributedString.Key.foregroundColor: UIColor.ypGray]
+        )
         nameTrackerTextField.backgroundColor = UIColor(hex: "#e6e8eb4d")
         nameTrackerTextField.font = .ypRegular_17
         nameTrackerTextField.textColor = .ypBlack
@@ -69,7 +86,10 @@ class CreationEventViewController: UIViewController, DataSourceDelegate {
     
     private lazy var limitSimbolLabel: UILabel = {
         let limitSimbolLabel = UILabel()
-        limitSimbolLabel.text = "Ограничение 38 символов"
+        limitSimbolLabel.text = NSLocalizedString(
+            "limitSimbol.message",
+            comment: "Limit simbol message"
+        )
         limitSimbolLabel.textColor = .ypRed
         limitSimbolLabel.textAlignment = .center
         limitSimbolLabel.font = .ypRegular_17
@@ -80,6 +100,7 @@ class CreationEventViewController: UIViewController, DataSourceDelegate {
     
     private var clearButton: UIButton?
     private var tableViewTopAnchorConstraint: NSLayoutConstraint?
+    private var nameTrackerTextFieldTopAnchorConstraint: NSLayoutConstraint?
     private lazy var emojiLabel: UILabel = {
         let emojiLabel = UILabel()
         emojiLabel.text = "Emoji"
@@ -105,7 +126,10 @@ class CreationEventViewController: UIViewController, DataSourceDelegate {
     private let emojies = emojiesArray
     private lazy var colorLabel: UILabel = {
         let colorLabel = UILabel()
-        colorLabel.text = "Цвет"
+        colorLabel.text = NSLocalizedString(
+            "color.title",
+            comment: "Title color"
+        )
         colorLabel.textColor = .ypBlack
         colorLabel.textAlignment = .left
         colorLabel.font = .ypBold_19
@@ -134,7 +158,13 @@ class CreationEventViewController: UIViewController, DataSourceDelegate {
                                          cellSpacing: 5)
     private let cancelButton: UIButton = {
         let cancelButton = UIButton()
-        cancelButton.setTitle("Отменить", for: .normal)
+        cancelButton.setTitle(
+            NSLocalizedString(
+                "cancel",
+                comment: "Title cancel button"
+            ),
+            for: .normal
+        )
         cancelButton.layer.cornerRadius = 16
         cancelButton.clipsToBounds = true
         cancelButton.backgroundColor = .ypWhite
@@ -154,7 +184,13 @@ class CreationEventViewController: UIViewController, DataSourceDelegate {
     
     private let createButton: UIButton = {
         let createButton = UIButton()
-        createButton.setTitle("Создать", for: .normal)
+        createButton.setTitle(
+            NSLocalizedString(
+                "create",
+                comment: "Title create button"
+            ),
+            for: .normal
+        )
         createButton.layer.cornerRadius = 16
         createButton.clipsToBounds = true
         createButton.backgroundColor = .ypGray
@@ -206,18 +242,32 @@ class CreationEventViewController: UIViewController, DataSourceDelegate {
         trackerCategoryStore.addTracker(
             title: creationEvent.categoryName,
             tracker: Tracker(
-                id: UUID(),
+                id: creationEvent.id,
                 name: creationEvent.name,
                 color: creationEvent.color!,
                 emoji: creationEvent.emoji,
-                shedule: shedule)
+                shedule: shedule,
+                fixed: false
+            )
         )
     }
     
     func setDataSource() {
         let items: [(title: String, subtitle: String)] = [
-            ("Категория", creationEvent.categoryName),
-            ("Расписание", creationEvent.sheduleString())
+            (
+                NSLocalizedString(
+                "category.title",
+                comment: "Title category"
+            ),
+             creationEvent.categoryName
+            ),
+            (
+                NSLocalizedString(
+                    "shedule.title",
+                    comment: "Title shedule"
+                ),
+             creationEvent.sheduleString()
+            )
         ]
         dataSource = TableViewStaticDataSource(cells: items.map { CreationTableViewCell(title: $0.title, subtitle: $0.subtitle) })
         tableView.dataSource = dataSource
@@ -245,8 +295,54 @@ class CreationEventViewController: UIViewController, DataSourceDelegate {
         }
     }
     
+    func setNameTrackerTextFieldConstraint() {
+        nameTrackerTextFieldTopAnchorConstraint?.isActive = false
+        nameTrackerTextFieldTopAnchorConstraint = nameTrackerTextField.topAnchor.constraint(equalTo: numberOfDaysLabel.bottomAnchor, constant: 40)
+        nameTrackerTextFieldTopAnchorConstraint?.isActive = true
+    }
+    
+    func setNumberOfDaysLabelText(id: UUID) {
+        numberOfDaysLabel.isHidden = false
+        numberOfDaysLabel.text = String.localizedStringWithFormat(
+            NSLocalizedString(
+                "numberOfDays",
+                comment: "Number of completed days"
+            ),
+            trackerRecordStore.getCompletedTrackCount(id: id)
+        )
+    }
+    
+    func setNameTracker(name: String) {
+        nameTrackerTextField.text = name
+    }
+    
+    func setColorTracker(color: UIColor) {
+        let indexPath = IndexPath(item: colors.firstIndex(of: color) ?? 0, section: 0)
+        colorsCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: .top)
+        let cell = colorsCollectionView.cellForItem(at: indexPath) as? ColorCollectionViewCell
+        cell?.configureColorCollectionViewBorderColor(with: colors[indexPath.row]?.withAlphaComponent(0.30).cgColor)
+    }
+    
+    func setEmojiTracker(emoji: String) {
+        let indexPath = IndexPath(item: emojies.firstIndex(of: emoji) ?? 0, section: 0)
+        emojiesCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: .top)
+        let cell = emojiesCollectionView.cellForItem(at: indexPath) as? EmojiCollectionViewCell
+        cell?.configureEmojiCollectionViewCellBackgroundColor(with: .ypLightGray)
+    }
+    
+    func setNewTitleCreateButton() {
+        createButton.setTitle(
+            NSLocalizedString(
+                "save",
+                comment: "Title save button"
+            ),
+            for: .normal
+        )
+    }
+    
     private func addSubviews() {
         view.addSubview(scrollView)
+        container.addSubview(numberOfDaysLabel)
         container.addSubview(nameTrackerTextField)
         container.addSubview(limitSimbolLabel)
         container.addSubview(tableView)
@@ -262,6 +358,7 @@ class CreationEventViewController: UIViewController, DataSourceDelegate {
     private func makeConstraints() {
         setContainerAndTableViewHeight(containerHeight: 781, tableViewHeight: 150)
         tableViewTopAnchorConstraint = tableView.topAnchor.constraint(equalTo: nameTrackerTextField.bottomAnchor, constant: 24)
+        nameTrackerTextFieldTopAnchorConstraint = nameTrackerTextField.topAnchor.constraint(equalTo: container.topAnchor, constant: 24)
         NSLayoutConstraint.activate([
             scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             scrollView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
@@ -272,14 +369,16 @@ class CreationEventViewController: UIViewController, DataSourceDelegate {
             container.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
             container.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
             container.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
-            containerHeightAnchorConstraint!,
+            containerHeightAnchorConstraint ?? NSLayoutConstraint(),
+            numberOfDaysLabel.topAnchor.constraint(equalTo: container.topAnchor, constant: 24),
+            numberOfDaysLabel.centerXAnchor.constraint(equalTo: container.centerXAnchor),
             nameTrackerTextField.heightAnchor.constraint(equalToConstant: 75),
-            nameTrackerTextField.topAnchor.constraint(equalTo: container.topAnchor, constant: 24),
+            nameTrackerTextFieldTopAnchorConstraint ?? NSLayoutConstraint(),
             nameTrackerTextField.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 16),
             nameTrackerTextField.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -16),
             limitSimbolLabel.topAnchor.constraint(equalTo: nameTrackerTextField.bottomAnchor, constant: 8),
             limitSimbolLabel.centerXAnchor.constraint(equalTo: container.centerXAnchor),
-            tableViewTopAnchorConstraint!,
+            tableViewTopAnchorConstraint ?? NSLayoutConstraint(),
             tableView.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 16),
             tableView.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -16),
             emojiLabel.topAnchor.constraint(equalTo: tableView.bottomAnchor, constant: 32),

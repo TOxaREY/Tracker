@@ -32,7 +32,13 @@ final class PageViewController: UIViewController {
     
     lazy var startButton: UIButton = {
         let startButton = UIButton()
-        startButton.setTitle("Вот это технологии!", for: .normal)
+        startButton.setTitle(
+            NSLocalizedString(
+                "startButton.title",
+                comment: "Start button title"
+            ),
+            for: .normal
+        )
         startButton.layer.cornerRadius = 16
         startButton.clipsToBounds = true
         startButton.backgroundColor = .ypBlack
