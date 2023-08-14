@@ -8,7 +8,6 @@
 import UIKit
 
 final class StatisticViewController: UIViewController {
-    private var navBar: UINavigationBar?
     private let colors = Colors()
     private let trackerCategoryStore = TrackerCategoryStore()
     private let trackerRecordStore = TrackerRecordStore()
@@ -173,7 +172,7 @@ extension StatisticViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "statisticCell", for: indexPath) as? StatisticCollectionViewCell
         cell?.setCompletedTrackersCountLabelText(number: String(recordsCount))
-        return cell!
+        return cell ?? UICollectionViewCell()
     }
 }
 

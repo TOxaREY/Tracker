@@ -141,11 +141,7 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
     }
     
     func configureTrackersCollectionViewCellPinImage(with isPinned: Bool) {
-        if isPinned {
-            pinImageView.isHidden = false
-        } else {
-            pinImageView.isHidden = true
-        }
+        pinImageView.isHidden = !isPinned
     }
     
     @objc private func didTapPlusButton() {

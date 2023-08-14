@@ -11,7 +11,7 @@ import CoreData
 final class TrackerStore: NSObject {
     weak var delegate: TrackerStoreDelegate?
     private let context: NSManagedObjectContext
-    private var fetchedResultsController: NSFetchedResultsController<TrackerCoreData>!
+    private var fetchedResultsController: NSFetchedResultsController<TrackerCoreData>?
     private let uiColorMarshalling = UIColorMarshalling()
     private let weekDaysMarshalling = WeekDayMarshalling()
     

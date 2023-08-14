@@ -11,7 +11,7 @@ import CoreData
 final class TrackerRecordStore: NSObject {
     weak var delegate: TrackerRecordStoreDelegate?
     private let context: NSManagedObjectContext
-    private var fetchedResultsController: NSFetchedResultsController<TrackerRecordCoreData>!
+    private var fetchedResultsController: NSFetchedResultsController<TrackerRecordCoreData>?
     
     convenience override init() {
         let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
